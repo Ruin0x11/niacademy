@@ -1,0 +1,18 @@
+<section class="phx-hero">
+  <h1>"asd"</h1>
+  <p>zxc</p>
+</section>
+
+<section class="row">
+  <article class="column">
+    <%= form_tag Routes.activity_path(@conn, :create) do %>
+    <select id="regimen_id" name="regimen_id">
+      <%= for {id, regimen} <- @regimens do %>
+          <option value="<%= id %>"><%= regimen["humanName"]%></option>
+          <% end %>
+    </select>
+    <input type="checkbox" name="show_controls" value="true" checked="true">Show Controls</input>
+    <button type="submit" class="full-width">Start</button>
+    <% end %>
+  </article>
+</section>

@@ -1,0 +1,39 @@
+activities:
+  - humanName: Reference Image
+    id: image-custom
+    source:
+      data: Custom
+      type: Custom
+  - description: Workbook.
+    humanName: Dunn
+    id: dunn
+    source:
+      data: Dunn
+      type: Freeform
+regimens:
+  - activities:
+      - activityId: image-custom
+        durationMinutes: 1
+      - activityId: image-custom
+        durationMinutes: 1
+      - activityId: image-custom
+        durationMinutes: 1
+      - activityId: image-custom
+        durationMinutes: 1
+      - activityId: image-custom
+        durationMinutes: 1
+      - activityId: image-custom
+        durationMinutes: 1
+      - activityId: image-custom
+        durationMinutes: 2
+      - activityId: image-custom
+        durationMinutes: 2
+      - activityId: image-custom
+        durationMinutes: 5
+      - activityId: image-custom
+        durationMinutes: 5
+      - activityId: image-custom
+        durationMinutes: 10
+    defaultCategories: []
+    humanName: "Figure drawing (30 minutes, 1-1-1-1-1-1-2-2-5-5-10)"
+    id: figure_30

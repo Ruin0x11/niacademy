@@ -1,0 +1,11 @@
+<div>Position: <%= @session.position %></div>
+<div class="timer-count">
+  <%= @display_minutes %>：<%= @display_seconds |> Integer.to_string |> String.pad_leading(2, "0") %>
+</div>
+
+<%= render_session(@session) %>
+
+<ul>
+  <li><%= button "Prev", to: Routes.activity_path(@socket, :prev, @session.id), method: :post, disabled: @session.position <= 0 %></li>
+  <li><%= button "Next", to: Routes.activity_path(@socket, :next, @session.id), method: :post %></li>
+</ul>
