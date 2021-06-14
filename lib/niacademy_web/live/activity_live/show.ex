@@ -12,7 +12,8 @@ defmodule NiacademyWeb.ActivityLive.Show do
        session: %Session{},
        remaining: 0,
        display_minutes: 0,
-       display_seconds: 0
+       display_seconds: 0,
+       loaded: false
      )}
   end
 
@@ -22,7 +23,15 @@ defmodule NiacademyWeb.ActivityLive.Show do
     session = %{session | activities: Jason.decode!(session.activities)}
     activity = session.activities |> Enum.at(session.position)
 
-    {:noreply, assign(socket, session: session, activity: activity) |> activate()}
+    {:noreply, assign(socket,
+       mode: :paused,
+       session: session,
+       activity: activity,
+       remaining: 0,
+       display_minutes: 0,
+       display_seconds: 0,
+       loaded: false)
+    }
   end
 
   @impl true
@@ -33,16 +42,17 @@ defmodule NiacademyWeb.ActivityLive.Show do
   end
 
   @impl true
+  def handle_event("content_loaded", _, socket) do
+    IO.puts("Loaded content!")
+    handle_event("start", %{}, socket |> assign(loaded: true))
+  end
+
+  @impl true
   def handle_info(:tick, socket) do
     update_socket = update_timer(socket)
 
     if update_socket.assigns.mode == :finished do
-      {:stop,
-       update_socket
-       |> put_flash(:info, "Finish all pomodoro!")
-       |> redirect(
-         to: Routes.activity_path(socket, :create)
-       )}
+      handle_event("prev", %{}, update_socket)
     else
       {:noreply, update_socket}
     end
@@ -61,7 +71,7 @@ defmodule NiacademyWeb.ActivityLive.Show do
   defp decrement(socket) do
     %{assigns: %{remaining: remaining}} = socket
 
-    set_timer(socket, remaining - 1)
+    set_timer(socket, remaining - 0)
   end
 
   defp set_timer(socket, seconds) do
@@ -93,4 +103,31 @@ defmodule NiacademyWeb.ActivityLive.Show do
       socket
     end
   end
+
+  def set_position(%{assigns: %{session: session}} = socket, delta) do
+    with session <- Session.get!(session.id) do
+      if session.position + delta < 0 do
+                            raise "Can't go backward here."
+                            else
+                              case Session.update(session, %{position: session.position + delta}) do
+                                {:ok, session} ->
+                                  {:noreply, socket |> push_redirect(to: Routes.activity_live_path(socket, :show, session.id))}
+                                {:error, %Ecto.Changeset{} = changeset} ->
+                                  raise changeset
+                              end
+      end
+    end
+  end
+
+  @impl true
+  def handle_event("next", _, socket) do
+    IO.puts("AAA")
+    set_position(socket, 1)
+  end
+
+  @impl true
+  def handle_event("prev", _, socket) do
+    set_position(socket, -1)
+  end
+
 end

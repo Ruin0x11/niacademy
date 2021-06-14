@@ -29,31 +29,4 @@ defmodule NiacademyWeb.ActivityController do
       end
     end
   end
-
-  def set_position(conn, session_id, delta) do
-    with session <- Session.get!(session_id) do
-      if session.position + delta < 0 do
-                            conn
-                            |> render_error(400)
-                            else
-                              case Session.update(session, %{position: session.position + delta}) do
-                                {:ok, session} ->
-                                  conn
-                                  |> redirect(to: Routes.activity_live_path(conn, :show, session.id))
-                                {:error, %Ecto.Changeset{} = changeset} ->
-                                  conn
-                                  |> put_status(:bad_request)
-                                  |> render(NiacademyWeb.ChangesetView, "error.json", changeset: changeset)
-                              end
-      end
-    end
-  end
-
-  def next(conn, %{"session_id" => session_id}) do
-    set_position(conn, session_id, 1)
-  end
-
-  def prev(conn, %{"session_id" => session_id}) do
-    set_position(conn, session_id, -1)
-  end
 end

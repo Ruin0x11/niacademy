@@ -22,8 +22,6 @@ defmodule NiacademyWeb.Router do
     resources "/sessions", SessionController
     live "/activity/:session_id", ActivityLive.Show, :show, as: :activity_live
     post "/activity", ActivityController, :create
-    post "/activity/:session_id/next", ActivityController, :next
-    post "/activity/:session_id/prev", ActivityController, :prev
     get "/image", ImageController, :show
   end
 

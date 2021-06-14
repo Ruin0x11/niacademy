@@ -1,11 +1,9 @@
 defmodule NiacademyWeb.ActivityView do
   use NiacademyWeb, :view
 
-  def render_session(session) do
-    activity = session.activities |> Enum.at(session.position) |> Map.get("activity")
-
-    content = render_content(session, activity)
-    description = render_description(session, activity)
+  def render_activity(activity) do
+    content = render_content(activity)
+    description = render_description(activity)
 
     """
     <div id="content">
@@ -17,18 +15,18 @@ defmodule NiacademyWeb.ActivityView do
     """ |> raw()
   end
 
-  def render_content(session, activity) do
+  def render_content(activity) do
     IO.inspect(activity)
     source = activity["source"]
 
     case source["type"] do
-      x when x in ["Custom", "Categories", "File"] -> render_image_content(session, source)
-      "Freeform" -> render_freeform_content(session, source)
+      x when x in ["Custom", "Categories", "File"] -> render_image_content(source)
+      "Freeform" -> render_freeform_content(source)
       _ -> "<div>(error)</div>"
     end
   end
 
-  def render_description(_session, activity) do
+  def render_description(activity) do
     if activity["description"] do
       """
       <div class="description">
@@ -40,18 +38,18 @@ defmodule NiacademyWeb.ActivityView do
     end
   end
 
-  def render_image_content(_session, source) do
+  def render_image_content(source) do
     image_file = source["extra"]["imageFile"]
     src = Routes.image_path(Endpoint, :show, image_file: image_file)
 
     """
-    <img class="image-content" src="#{src}" alt="Content"/>
+    <img id="content" class="image-content" src="#{src}" alt="Content" phx-hook="ContentLoaded"/>
     """
   end
 
-  def render_freeform_content(_session, source) do
+  def render_freeform_content(source) do
     """
-    <h1>#{source["data"]}</h1>
+    <h1 id="content" phx-hook="ContentLoaded"/>#{source["data"]}</h1>
     """
   end
 end
