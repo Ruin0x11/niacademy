@@ -15,6 +15,7 @@ defmodule NiacademyWeb.ActivityLive.Show do
        percent_elapsed: 0,
        display_minutes: 0,
        display_seconds: 0,
+       unbounded: false,
        loaded: false
      )}
   end
@@ -34,6 +35,7 @@ defmodule NiacademyWeb.ActivityLive.Show do
        percent_elapsed: 0,
        display_minutes: 0,
        display_seconds: 0,
+       unbounded: activity["unboundedDuration"],
        loaded: false)
     }
   end
@@ -88,8 +90,8 @@ defmodule NiacademyWeb.ActivityLive.Show do
     end
   end
 
-  defp update_timer(%{assigns: %{remaining: 0, mode: :active, timer: timer, activity: activity}} = socket) do
-    if activity["unboundedDuration"] do
+  defp update_timer(%{assigns: %{remaining: 0, mode: :active, timer: timer, unbounded: unbounded}} = socket) do
+    if unbounded do
       decrement(socket)
     else
       {:ok, _} = :timer.cancel(timer)

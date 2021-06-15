@@ -19,8 +19,14 @@
       </span>
     </div>
     <div class="control-bar">
+      <%= cond do %>
+      <% @session.show_controls -> %>
       <button class="fas fa-backward fa-lg" phx-click="prev" <%= if @session.position <= 0 do %>disabled<% end %>/>
       <button class="fas fa-forward fa-lg" phx-click="next"/>
+      <% @unbounded && @remaining < 0 -> %>
+      <button class="fas fa-forward fa-lg" phx-click="next"/>
+      <% true -> %>
+      <% end %>
     </div>
   </div>
 </div>
