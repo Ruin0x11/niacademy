@@ -11,6 +11,8 @@ defmodule NiacademyWeb.ActivityLive.Show do
        mode: :paused,
        session: %Session{},
        remaining: 0,
+       total: 0,
+       percent_elapsed: 0,
        display_minutes: 0,
        display_seconds: 0,
        loaded: false
@@ -28,6 +30,8 @@ defmodule NiacademyWeb.ActivityLive.Show do
        session: session,
        activity: activity,
        remaining: 0,
+       total: 0,
+       percent_elapsed: 0,
        display_minutes: 0,
        display_seconds: 0,
        loaded: false)
@@ -95,16 +99,27 @@ defmodule NiacademyWeb.ActivityLive.Show do
   end
 
   defp decrement(socket) do
-    %{assigns: %{remaining: remaining}} = socket
+    if socket.assigns.loaded do
+      %{assigns: %{remaining: remaining}} = socket
 
-    set_timer(socket, remaining - 0)
+      set_timer(socket, remaining - 1)
+    else
+      socket
+    end
   end
 
   defp set_timer(socket, seconds) do
+    %{assigns: %{total: total}} = socket
+
     display_minutes = div(seconds, 60)
     display_seconds = rem(seconds, 60)
+    percent = ((total - seconds) / total) * 100.0
 
-    assign(socket, remaining: seconds, display_minutes: display_minutes, display_seconds: display_seconds)
+    assign(socket,
+      remaining: seconds,
+      percent_elapsed: percent,
+      display_minutes: display_minutes,
+      display_seconds: display_seconds)
   end
 
   @impl true
@@ -124,7 +139,7 @@ defmodule NiacademyWeb.ActivityLive.Show do
 
       total_seconds = (activity |> Map.get("durationMinutes")) * 60
 
-      socket |> set_timer(total_seconds) |> assign(mode: :active, timer: timer)
+      socket |> assign(mode: :active, total: total_seconds, timer: timer) |> set_timer(total_seconds)
     else
       socket
     end

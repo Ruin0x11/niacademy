@@ -11,7 +11,7 @@
     <template x-for="(tag, index) in selected">
       <div class="tag-badge">
         <span x-text="tag"></span>
-        <button x-bind:data-index="index" @click.stop="removeMe($event)">x</button>
+        <button type="button" x-bind:data-index="index" @click.stop="removeMe($event)">x</button>
         <input type="hidden" x-bind:name="id + '[' + formIndex + '][' + index + ']'" x-bind:value="tag"/>
       </div>
     </template>

@@ -7,7 +7,10 @@ $bar-height = 15vh
        margin: 0 0.1em;
        .position
            padding-right: 0.2em;
-           color: #888888
+           .position-current
+               color: #DDDDDD
+           .position-total
+               color: #888888
 
    #content
       display: block;
@@ -38,13 +41,35 @@ $bar-height = 15vh
       display: flex;
       flex-direction: column;
       justify-content: center;
-      border-top: 2px solid #888;
+      border-top: 2px solid #444;
+
       .bar-container
           display: flex;
           margin: auto;
-          .control-bar
-              margin: auto;
-              button
-                margin: 0 0.2rem;
-                height: 5rem;
-                padding: 1.5rem;
+      .control-bar
+          margin: 1em;
+          position: absolute;
+          right: 0;
+          button
+            margin: 0 0.2rem;
+            height: 5rem;
+            padding: 1.5rem;
+
+      .progress-bar
+         top: 0;
+         width: 100%
+         color: #28a745;
+         position: absolute;
+         height: .5em;
+         background: transparent;
+         border: 0;
+         -moz-transition: all 4s ease;
+         -moz-transition-delay: 1s;
+         -webkit-transition: all 4s ease;
+         -webkit-transition-delay: 1s;
+         transition: all 4s ease;
+         transition-delay: 1s;
+         &::-moz-progress-bar
+             background: #28a745;
+         &::-webkit-progress-value
+             background: #28a745;

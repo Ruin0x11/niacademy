@@ -63,7 +63,7 @@ defmodule Niacademy.Db do
 
   defp resolve_one(args) do
     with regimen <- Niacademy.Db.list_regimens[args[:regimen_id]],
-         categories <- args[:image_categories] || regimen["defaultCategories"],
+         categories <- args[:categories] || regimen["defaultCategories"],
          activity_args <- %{categories: categories, regimen: regimen} do
       %{
         regimen_id: args[:regimen_id],
@@ -78,7 +78,10 @@ defmodule Niacademy.Db do
       Enum.map(0..count-1, fn i ->
         %{
           regimen_id: params["regimen_id"]["#{i}"],
-          image_categories: params["image_categories"]["#{i}"]
+          categories: case params["categories"]["#{i}"] do
+                        nil -> nil
+                        x -> Enum.map(x, fn {_, key} -> key end)
+                      end
         }
       end)
     end
@@ -86,12 +89,13 @@ defmodule Niacademy.Db do
 
   def create_session_changeset(params) do
     with data <- arrayize(params),
-      resolved <- Enum.map(data, & resolve_one(&1)) |>IO.inspect do
+      resolved <- Enum.map(data, & resolve_one(&1)) do
       %{
         regimen_ids: Enum.map(resolved, & &1[:regimen_id]),
         activities: Jason.encode!(Enum.map(resolved, & &1[:activities]) |> Enum.concat),
         position: 0,
-        show_controls: !!params["show_controls"]
+        show_controls: !!params["show_controls"],
+        finished: false
       }
     end
   end

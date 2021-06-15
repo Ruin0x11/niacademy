@@ -2,7 +2,12 @@ let Hooks = {}
 
 Hooks.ContentLoaded = {
   mounted(){
-    this.pushEvent("content_loaded", {})
+    if (this.el.complete) {
+      this.pushEvent("content_loaded", {})
+    }
+    this.el.addEventListener("load", e => {
+      this.pushEvent("content_loaded", {})
+    });
   }
 }
 

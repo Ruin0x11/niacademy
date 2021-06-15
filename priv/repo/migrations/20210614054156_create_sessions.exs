@@ -3,11 +3,11 @@ defmodule Niacademy.Repo.Migrations.CreateSessions do
 
   def change do
     create table(:sessions) do
-      add :regimen_id, :string
+      add :regimen_ids, {:array, :string}
       add :position, :integer
       add :activities, :text
-      add :categories, {:array, :string}
       add :show_controls, :boolean
+      add :finished, :boolean
 
       timestamps()
     end

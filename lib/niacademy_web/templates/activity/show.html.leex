@@ -2,10 +2,14 @@
   <%= render_activity(@activity["activity"]) %>
 
   <div id="bottom-bar">
+    <progress id="progress-bar" class="progress-bar" max="100" value=<%= @percent_elapsed %>></progress>
     <div class="bar-container">
       <span class="info">
         <%= if @loaded do %>
-        <span class="position">#<%= @session.position %></span>
+        <span class="position">
+          <span class="position-current">#<%= @session.position + 1 %></span>
+          <span class="position-total">/ <%= @session.activities |> Enum.count %></span>
+        </span>
         <span class="timer-count">
           <%= @display_minutes %>：<%= @display_seconds |> Integer.to_string |> String.pad_leading(2, "0") %>
         </span>
@@ -13,11 +17,10 @@
         <span class="loading">Loading...</span>
         <% end %>
       </span>
-
-      <span class="control-bar">
-        <button class="fas fa-backward fa-lg" phx-click="prev" <%= if @session.position <= 0 do %>disabled<% end %>/>
-        <button class="fas fa-forward fa-lg" phx-click="next"/>
-      </span>
+    </div>
+    <div class="control-bar">
+      <button class="fas fa-backward fa-lg" phx-click="prev" <%= if @session.position <= 0 do %>disabled<% end %>/>
+      <button class="fas fa-forward fa-lg" phx-click="next"/>
     </div>
   </div>
 </div>

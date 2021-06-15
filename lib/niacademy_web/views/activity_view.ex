@@ -14,7 +14,6 @@ defmodule NiacademyWeb.ActivityView do
   end
 
   def render_content(activity) do
-    IO.inspect(activity)
     source = activity["source"]
 
     case source["type"] do
