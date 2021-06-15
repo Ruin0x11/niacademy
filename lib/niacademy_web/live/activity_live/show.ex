@@ -82,16 +82,20 @@ defmodule NiacademyWeb.ActivityLive.Show do
     update_socket = update_timer(socket)
 
     if update_socket.assigns.mode == :finished do
-      handle_event("prev", %{}, update_socket)
+      handle_event("next", %{}, update_socket)
     else
       {:noreply, update_socket}
     end
   end
 
-  defp update_timer(%{assigns: %{remaining: 0, mode: :active, timer: timer}} = socket) do
+  defp update_timer(%{assigns: %{remaining: 0, mode: :active, timer: timer, activity: activity}} = socket) do
     {:ok, _} = :timer.cancel(timer)
 
-    assign(socket, mode: :finished, timer: nil)
+    if activity["unboundedDuration"] do
+      assign(socket, mode: :finished, timer: nil)
+    else
+      socket
+    end
   end
 
   defp update_timer(socket) do
@@ -137,7 +141,7 @@ defmodule NiacademyWeb.ActivityLive.Show do
 
       %{assigns: %{activity: activity}} = socket
 
-      total_seconds = (activity |> Map.get("durationMinutes")) * 60
+      total_seconds = (activity["durationMinutes"]) * 60
 
       socket |> assign(mode: :active, total: total_seconds, timer: timer) |> set_timer(total_seconds)
     else

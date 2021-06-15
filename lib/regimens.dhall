@@ -21,7 +21,7 @@ let Activity
 
 let ActivitySegment
     : Type
-    = { activityId : Text, durationMinutes : Natural }
+    = { activityId : Text, durationMinutes : Natural, unboundedDuration : Bool }
 
 let Regimen
     : Type
@@ -46,6 +46,13 @@ let activities
             { type = SourceType.Freeform, data = SourceData.Freeform "Dunn" }
           }
         : Activity
+      ,   { id = "fundamentals_2_dissections"
+          , humanName = "Dissections"
+          , description = Some "Dissections exercise"
+          , source =
+            { type = SourceType.Freeform, data = SourceData.Freeform "Dunn" }
+          }
+        : Activity
       ]
 
 let generateActivityList =
@@ -54,7 +61,9 @@ let generateActivityList =
         List/map
           Natural
           ActivitySegment
-          (\(durationMinutes : Natural) -> { activityId, durationMinutes })
+          ( \(durationMinutes : Natural) ->
+              { activityId, durationMinutes, unboundedDuration = False }
+          )
           durations
 
 let regimens
@@ -66,6 +75,16 @@ let regimens
             generateActivityList
               "image-custom"
               [ 1, 1, 1, 1, 1, 1, 2, 2, 5, 5, 10 ]
+        }
+      , { id = "textures"
+        , humanName = "Textures"
+        , defaultCategories = [] : List Text
+        , activities =
+          [ { activityId = "fundamentals_2_dissections"
+            , durationMinutes = 1
+            , unboundedDuration = True
+            }
+          ]
         }
       ]
 

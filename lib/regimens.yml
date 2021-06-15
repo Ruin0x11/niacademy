@@ -10,30 +10,54 @@ activities:
     source:
       data: Dunn
       type: Freeform
+  - description: Dissections exercise
+    humanName: Dissections
+    id: fundamentals_2_dissections
+    source:
+      data: Dunn
+      type: Freeform
 regimens:
   - activities:
       - activityId: image-custom
         durationMinutes: 1
+        unboundedDuration: false
       - activityId: image-custom
         durationMinutes: 1
+        unboundedDuration: false
       - activityId: image-custom
         durationMinutes: 1
+        unboundedDuration: false
       - activityId: image-custom
         durationMinutes: 1
+        unboundedDuration: false
       - activityId: image-custom
         durationMinutes: 1
+        unboundedDuration: false
       - activityId: image-custom
         durationMinutes: 1
+        unboundedDuration: false
       - activityId: image-custom
         durationMinutes: 2
+        unboundedDuration: false
       - activityId: image-custom
         durationMinutes: 2
+        unboundedDuration: false
       - activityId: image-custom
         durationMinutes: 5
+        unboundedDuration: false
       - activityId: image-custom
         durationMinutes: 5
+        unboundedDuration: false
       - activityId: image-custom
         durationMinutes: 10
+        unboundedDuration: true
     defaultCategories: []
     humanName: "Figure drawing (30 minutes, 1-1-1-1-1-1-2-2-5-5-10)"
     id: figure_30
+  - activities:
+      - activityId: fundamentals_2_dissections
+        durationMinutes: 1
+        unboundedDuration: true
+    defaultCategories: []
+    humanName: Textures
+    id: textures
