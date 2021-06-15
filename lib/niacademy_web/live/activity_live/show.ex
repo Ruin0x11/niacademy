@@ -89,12 +89,11 @@ defmodule NiacademyWeb.ActivityLive.Show do
   end
 
   defp update_timer(%{assigns: %{remaining: 0, mode: :active, timer: timer, activity: activity}} = socket) do
-    {:ok, _} = :timer.cancel(timer)
-
     if activity["unboundedDuration"] do
-      assign(socket, mode: :finished, timer: nil)
+      decrement(socket)
     else
-      socket
+      {:ok, _} = :timer.cancel(timer)
+      assign(socket, mode: :finished, timer: nil)
     end
   end
 

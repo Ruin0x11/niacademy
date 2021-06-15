@@ -11,4 +11,10 @@ Hooks.ContentLoaded = {
   }
 }
 
+Hooks.ContentLoadedText = {
+  mounted(){
+    this.pushEvent("content_loaded", {})
+  }
+}
+
 export default Hooks
