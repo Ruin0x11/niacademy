@@ -6,10 +6,9 @@ defmodule Niacademy.Session do
   alias Niacademy.Session
 
   schema "sessions" do
-    field :regimen_id, :string
+    field :regimen_ids, {:array, :string}
     field :position, :integer
     field :activities, :string
-    field :categories, {:array, :string}, default: []
     field :show_controls, :boolean, default: false
 
     timestamps()
@@ -18,8 +17,8 @@ defmodule Niacademy.Session do
   @doc false
   def changeset(session, attrs) do
     session
-    |> cast(attrs, [:regimen_id, :position, :activities, :categories, :show_controls])
-    |> validate_required([:regimen_id, :position, :activities, :categories, :show_controls])
+    |> cast(attrs, [:regimen_ids, :position, :activities, :show_controls])
+    |> validate_required([:regimen_ids, :position, :activities, :show_controls])
   end
 
   @doc """

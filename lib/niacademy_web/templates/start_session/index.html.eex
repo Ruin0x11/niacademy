@@ -84,7 +84,8 @@
         <button class="delete-button" x-on:click="removeField(index)" type="button">-</button>
         </div>
       </template>
-      <input type="checkbox" name="'show_controls" value="true" checked="true" x-model="field.show_controls">Show Controls</input>
+      <input type="hidden" name="count" x-bind:value="fields.length">
+      <input type="checkbox" name="show_controls" value="true" checked="true">Show Controls</input>
       <br>
       <div class="button-container">
         <button class="submit-button" type="submit" class="full-width">Start</button>

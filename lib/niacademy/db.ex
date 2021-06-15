@@ -61,19 +61,38 @@ defmodule Niacademy.Db do
     raise "Invalid activity #{activity}"
   end
 
-  defp create_one_changeset(params) do
-    with regimen <- Niacademy.Db.list_regimens[regimen_id],
-         categories <- params["categories"] || regimen["defaultCategories"],
-         args <- %{categories: categories, regimen: regimen} do
+  defp resolve_one(args) do
+    with regimen <- Niacademy.Db.list_regimens[args[:regimen_id]],
+         categories <- args[:image_categories] || regimen["defaultCategories"],
+         activity_args <- %{categories: categories, regimen: regimen} do
       %{
-        regimen_id: regimen_id,
-        position: 0,
-        activities: Jason.encode!(regimen["activities"] |> Enum.map(& Map.put(&1, :activity, Niacademy.Db.resolve_activity(&1["activityId"], args)))),
+        regimen_id: args[:regimen_id],
+        activities: regimen["activities"] |> Enum.map(& Map.put(&1, :activity, Niacademy.Db.resolve_activity(&1["activityId"], activity_args))),
         categories: categories
       }
     end
   end
+
+  defp arrayize(params) do
+    with {count, _} <- Integer.parse(params["count"]) do
+      Enum.map(0..count-1, fn i ->
+        %{
+          regimen_id: params["regimen_id"]["#{i}"],
+          image_categories: params["image_categories"]["#{i}"]
+        }
+      end)
+    end
   end
 
   def create_session_changeset(params) do
+    with data <- arrayize(params),
+      resolved <- Enum.map(data, & resolve_one(&1)) |>IO.inspect do
+      %{
+        regimen_ids: Enum.map(resolved, & &1[:regimen_id]),
+        activities: Jason.encode!(Enum.map(resolved, & &1[:activities]) |> Enum.concat),
+        position: 0,
+        show_controls: !!params["show_controls"]
+      }
+    end
+  end
 end
