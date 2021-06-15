@@ -2,20 +2,22 @@
   <%= render_activity(@activity["activity"]) %>
 
   <div id="bottom-bar">
-    <span class="info">
-      <%= if @loaded do %>
-      <span class="position">#<%= @session.position %></span>
-      <span class="timer-count">
-        <%= @display_minutes %>：<%= @display_seconds |> Integer.to_string |> String.pad_leading(2, "0") %>
+    <div class="bar-container">
+      <span class="info">
+        <%= if @loaded do %>
+        <span class="position">#<%= @session.position %></span>
+        <span class="timer-count">
+          <%= @display_minutes %>：<%= @display_seconds |> Integer.to_string |> String.pad_leading(2, "0") %>
+        </span>
+        <% else %>
+        <span class="loading">Loading...</span>
+        <% end %>
       </span>
-      <% else %>
-      <span class="loading">Loading...</span>
-      <% end %>
-    </span>
 
-    <span class="control-bar">
-      <button phx-click="prev" <%= if @session.position <= 0 do %>disabled<% end %>>Prev</button>
-              <button phx-click="next">Next</button>
-    </span>
+      <span class="control-bar">
+        <button class="fas fa-backward fa-lg" phx-click="prev" <%= if @session.position <= 0 do %>disabled<% end %>/>
+        <button class="fas fa-forward fa-lg" phx-click="next"/>
+      </span>
+    </div>
   </div>
 </div>

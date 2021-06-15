@@ -34,6 +34,21 @@ defmodule NiacademyWeb.ActivityLive.Show do
     }
   end
 
+  def set_position(%{assigns: %{session: session}} = socket, delta) do
+    with session <- Session.get!(session.id) do
+      if session.position + delta < 0 do
+                            raise "Can't go backward here."
+                            else
+                              case Session.update(session, %{position: session.position + delta}) do
+                                {:ok, session} ->
+                                  {:noreply, socket |> push_redirect(to: Routes.activity_live_path(socket, :show, session.id))}
+                                {:error, %Ecto.Changeset{} = changeset} ->
+                                  raise changeset
+                              end
+      end
+    end
+  end
+
   @impl true
   def handle_event("start", _, socket) do
     {:noreply,
@@ -45,6 +60,17 @@ defmodule NiacademyWeb.ActivityLive.Show do
   def handle_event("content_loaded", _, socket) do
     IO.puts("Loaded content!")
     handle_event("start", %{}, socket |> assign(loaded: true))
+  end
+
+  @impl true
+  def handle_event("next", _, socket) do
+    IO.puts("AAA")
+    set_position(socket, 1)
+  end
+
+  @impl true
+  def handle_event("prev", _, socket) do
+    set_position(socket, -1)
   end
 
   @impl true
@@ -103,31 +129,4 @@ defmodule NiacademyWeb.ActivityLive.Show do
       socket
     end
   end
-
-  def set_position(%{assigns: %{session: session}} = socket, delta) do
-    with session <- Session.get!(session.id) do
-      if session.position + delta < 0 do
-                            raise "Can't go backward here."
-                            else
-                              case Session.update(session, %{position: session.position + delta}) do
-                                {:ok, session} ->
-                                  {:noreply, socket |> push_redirect(to: Routes.activity_live_path(socket, :show, session.id))}
-                                {:error, %Ecto.Changeset{} = changeset} ->
-                                  raise changeset
-                              end
-      end
-    end
-  end
-
-  @impl true
-  def handle_event("next", _, socket) do
-    IO.puts("AAA")
-    set_position(socket, 1)
-  end
-
-  @impl true
-  def handle_event("prev", _, socket) do
-    set_position(socket, -1)
-  end
-
 end

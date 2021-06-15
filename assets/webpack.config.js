@@ -41,17 +41,27 @@ module.exports = (env, options) => {
         {
           test: /\.css$/,
           use: [
-            'css-loader',
-            MiniCssExtractPlugin.loader
+            MiniCssExtractPlugin.loader,
+            'css-loader'
           ],
         },
         {
           test: /\.styl$/,
           use: [
-            'style-loader',
+            MiniCssExtractPlugin.loader,
             'css-loader',
             'stylus-loader'
           ],
+        },
+        {
+          test: /\.(jpg|jpeg|png|woff|woff2|eot|ttf|svg)$/,
+          use: {
+            loader:'file-loader',
+            options: {
+              name: '[name].[ext]',
+              outputPath: 'fonts/'
+            }
+          }
         }
       ]
     },

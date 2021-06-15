@@ -7,11 +7,9 @@ defmodule NiacademyWeb.ActivityView do
 
     """
     <div id="content">
-    <div class="main">
     #{content}
     </div>
     #{description}
-    </div>
     """ |> raw()
   end
 
@@ -43,7 +41,7 @@ defmodule NiacademyWeb.ActivityView do
     src = Routes.image_path(Endpoint, :show, image_file: image_file)
 
     """
-    <img id="content" class="image-content" src="#{src}" alt="Content" phx-hook="ContentLoaded"/>
+    <img id="image-content" class="image-content" src="#{src}" alt="Content" phx-hook="ContentLoaded"/>
     """
   end
 
