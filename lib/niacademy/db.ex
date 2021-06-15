@@ -61,7 +61,7 @@ defmodule Niacademy.Db do
     raise "Invalid activity #{activity}"
   end
 
-  def create_session_changeset(regimen_id, params) do
+  defp create_one_changeset(params) do
     with regimen <- Niacademy.Db.list_regimens[regimen_id],
          categories <- params["categories"] || regimen["defaultCategories"],
          args <- %{categories: categories, regimen: regimen} do
@@ -73,4 +73,7 @@ defmodule Niacademy.Db do
       }
     end
   end
+  end
+
+  def create_session_changeset(params) do
 end

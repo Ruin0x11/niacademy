@@ -26,4 +26,11 @@ defmodule Niacademy.Images do
       xs -> Enum.flat_map(xs, fn x -> Niacademy.Images.list_for_category x end)
     end
   end
+
+  def list_categories do
+    images = Niacademy.Images.Cache.get
+    categories = images |> Map.keys
+    subcategories = images |> Enum.flat_map(fn {key, value} -> Enum.map(value, fn {subkey, _} -> "#{key}/#{subkey}" end) end)
+    Enum.concat(categories, subcategories)
+  end
 end

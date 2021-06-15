@@ -49,7 +49,7 @@
         selected: [],
         id: id,
         formIndex: index,
-        unselected: ["volvo", "saab", "opel", "audi", "mercedes", "mazda"],
+        unselected: <%= Jason.encode!(@image_categories) |> raw() %>,
         addMe(e) {
           const index = e.target.dataset.index;
           const extracted = this.unselected.splice(index, 1);
