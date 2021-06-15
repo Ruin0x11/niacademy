@@ -43,7 +43,8 @@ defmodule NiacademyWeb.ActivityLive.Show do
       if session.position + delta < 0 do
                             raise "Can't go backward here."
                             else
-                              case Session.update(session, %{position: session.position + delta}) do
+                              finished = session.position + delta >= Enum.count(Jason.decode!(session.activities))
+                              case Session.update(session, %{position: session.position + delta, finished: finished}) do
                                 {:ok, session} ->
                                   {:noreply, socket |> push_redirect(to: Routes.activity_live_path(socket, :show, session.id))}
                                 {:error, %Ecto.Changeset{} = changeset} ->
@@ -68,7 +69,6 @@ defmodule NiacademyWeb.ActivityLive.Show do
 
   @impl true
   def handle_event("next", _, socket) do
-    IO.puts("AAA")
     set_position(socket, 1)
   end
 
