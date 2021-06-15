@@ -36,12 +36,16 @@ defmodule NiacademyWeb.ActivityView do
   end
 
   def render_image_content(source) do
-    image_file = source["extra"]["imageFile"]
-    src = Routes.image_path(Endpoint, :show, image_file: image_file)
+    image_files = source["extra"]["imageFiles"]
 
-    """
-    <img id="image-content" class="image-content" src="#{src}" alt="Content" phx-hook="ContentLoaded"/>
-    """
+    imgs = Enum.map(image_files, fn image_file ->
+      src = Routes.image_path(Endpoint, :show, image_file: image_file)
+      """
+      <img id="image-content" class="image-content" src="#{src}" alt="Content" phx-hook="ContentLoaded"/>
+      """
+    end)
+
+    Enum.concat(imgs, '\n')
   end
 
   def render_freeform_content(source) do

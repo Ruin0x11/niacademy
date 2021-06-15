@@ -5,7 +5,7 @@ let List/map = https://prelude.dhall-lang.org/v15.0.0/List/map
 let SourceType = < File | Categories | Freeform | Custom >
 
 let SourceData =
-      < File : Text | Categories : List Text | Freeform : Text | Custom >
+      < File : List Text | Categories : List Text | Freeform : Text | Custom >
 
 let Source
     : Type
