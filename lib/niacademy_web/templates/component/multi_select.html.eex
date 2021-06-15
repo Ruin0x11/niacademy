@@ -1,0 +1,32 @@
+<div class="msa-wrapper" x-data="<%= @data %>" x-init="$watch('selected', value => selectedString = value.join(','))">
+  <input
+    x-model="selectedString" 
+    type="text" id="msa-input" 
+    aria-hidden="true" 
+    x-bind:aria-expanded="listActive.toString()" 
+    aria-haspopup="tag-list"
+    hidden>
+  <div class="input-presentation" @click="listActive = !listActive" @click.away="listActive = false" x-bind:class="{'active': listActive}">
+    <span class="placeholder" x-show="selected.length == 0"><%= @label %></span>
+    <template x-for="(tag, index) in selected">
+      <div class="tag-badge">
+        <span x-text="tag"></span>
+        <button x-bind:data-index="index" @click.stop="removeMe($event)">x</button>
+        <input type="hidden" x-bind:name="id + '[' + formIndex + '][' + index + ']'" x-bind:value="tag"/>
+      </div>
+    </template>
+  </div>
+  <ul id="tag-list" x-show.transition="listActive" role="listbox">
+    <template x-for="(tag, index, collection) in unselected">
+      <li x-show="!selected.includes(tag)" 
+          x-bind:value="tag" 
+          x-text="tag" 
+          aria-role="button" 
+          @click.stop="addMe($event)" 
+          x-bind:data-index="index"
+          role="option"
+          ></li>
+    </template>
+  </ul>
+</div>
+

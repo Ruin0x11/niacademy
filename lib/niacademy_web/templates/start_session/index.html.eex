@@ -1,18 +1,150 @@
-<section class="phx-hero">
-  <h1>"asd"</h1>
-  <p>zxc</p>
-</section>
+<div class="start-session-container">
+  <section class="phx-hero">
+    <h1>"asd"</h1>
+    <p>zxc</p>
+  </section>
 
-<section class="row">
-  <article class="column">
-    <%= form_tag Routes.activity_path(@conn, :create) do %>
-    <select id="regimen_id" name="regimen_id">
-      <%= for {id, regimen} <- @regimens do %>
-          <option value="<%= id %>"><%= regimen["humanName"]%></option>
-          <% end %>
-    </select>
-    <input type="checkbox" name="show_controls" value="true" checked="true">Show Controls</input>
-    <button type="submit" class="full-width">Start</button>
-    <% end %>
-  </article>
-</section>
+  <!-- <div class="info-container"> -->
+    <!--   <section class="regimens"> -->
+      <!--     <div class="regimen-form"> -->
+        <!--       <%= form_tag Routes.activity_path(@conn, :create) do %> -->
+        <!--       <select id="regimen_id" name="regimen_id"> -->
+          <!--         <%= for {id, regimen} <- @regimens do %> -->
+            <!--             <option value="<%= id %>"><%= regimen["humanName"]%></option> -->
+            <!--         <% end %> -->
+            <!--       </select> -->
+        <!--       <br> -->
+        <!--       <input type="checkbox" name="show_controls" value="true" checked="true">Show Controls</input> -->
+        <!--       <br> -->
+        <!--       <button type="submit" class="full-width">Start</button> -->
+        <!--       <% end %> -->
+        <!--     </div> -->
+      <!--   </section> -->
+    <!-- </div> -->
+
+  <script type="text/javascript">
+    function form_handler() {
+      let data = {
+        fields: [],
+        addNewField() {
+          this.fields.push({
+            show_controls: false,
+            regimen_id: ''
+          });
+        },
+        removeField(index) {
+          if (this.fields.length > 1) {
+            this.fields.splice(index, 1);
+          }
+        }
+      }
+      data.addNewField();
+      return data;
+    }
+
+    function multiselectComponent(id, index) {
+      return {
+        listActive: false,
+        selectedString: '',
+        selected: [],
+        id: id,
+        formIndex: index,
+        unselected: ["volvo", "saab", "opel", "audi", "mercedes", "mazda"],
+        addMe(e) {
+          const index = e.target.dataset.index;
+          const extracted = this.unselected.splice(index, 1);
+          this.selected.push(extracted[0]);
+        },
+        removeMe(e) {
+          const index = e.target.dataset.index;
+          const extracted = this.selected.splice(index, 1);
+          this.unselected.push(extracted[0]);
+        }
+      };
+    }
+  </script>
+
+  <div class="info-container">
+    <section class="regimens" x-data="form_handler()">
+      <%= form_tag Routes.activity_path(@conn, :create) do %>
+      <template x-for="(field, index) in fields" :key="index">
+        <div class="regimen-container">
+          <div class="regimen-form" :data-index="index">
+            <label for="msa-input">Exercise:</label>
+            <select id="regimen_id" x-bind:name="'regimen_id[' + index + ']'" x-model="field.regimen_id">
+              <%= for {id, regimen} <- @regimens do %>
+                  <option value="<%= id %>"><%= regimen["humanName"]%></option>
+                  <% end %>
+            </select>
+            <br>
+            <label for="msa-input">Image categories:</label>
+            <%= render NiacademyWeb.ComponentView, "multi_select.html", conn: @conn, data: "multiselectComponent('categories', $el.parentElement.dataset.index)", label: "Select..." %>
+            <br>
+          </div>
+        <button class="delete-button" x-on:click="removeField(index)" type="button">-</button>
+        </div>
+      </template>
+      <input type="checkbox" name="'show_controls" value="true" checked="true" x-model="field.show_controls">Show Controls</input>
+      <br>
+      <div class="button-container">
+        <button class="submit-button" type="submit" class="full-width">Start</button>
+        <button class="add-button" type="button" x-on:click="addNewField()">+</button>
+      </div>
+      <% end %>
+    </section>
+  </div>
+
+  <div x-data="{ isOpen: true }">
+    <button x-on:click=" isOpen = !isOpen">Toggle</button>
+    <h1 x-show="isOpen">Alpinjs</h1>
+  </div>
+
+  <section>
+    <script type="text/javascript">
+      function handler() {
+        return {
+          fields: [],
+          addNewField() {
+            this.fields.push({
+              txt1: '',
+              txt2: ''
+            });
+          },
+          removeField(index) {
+            this.fields.splice(index, 1);
+          }
+        }
+      }
+    </script>
+
+    <div class="row" x-data="handler()">
+      <div class="col">
+        <table class="table table-bordered align-items-center table-sm">
+          <thead class="thead-light">
+            <tr>
+              <th>#</th>
+              <th>Text Field 1</th>
+              <th>Text Field 2</th>
+              <th>Remove</th>
+            </tr>
+          </thead>
+          <tbody>
+            <template x-for="(field, index) in fields" :key="index">
+              <tr>
+                <td x-text="index + 1"></td>
+                <td><input x-model="field.txt1" type="text" name="txt1[]" class="form-control"></td>
+                <td><input x-model="field.txt2" type="text" name="txt2[]" class="form-control"></td>
+                <td><button type="button" class="btn btn-danger btn-small" @click="removeField(index)">&times;</button></td>
+              </tr>
+            </template>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="4" class="text-right"><button type="button" class="btn btn-info" @click="addNewField()">+ Add Row</button></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </section>
+</div>

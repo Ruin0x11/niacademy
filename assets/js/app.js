@@ -12,5 +12,6 @@ import "../css/app.styl"
 //     import {Socket} from "phoenix"
 //     import socket from "./socket"
 //
+import "alpinejs"
 import liveSocket from "./live_socket"
 import "phoenix_html"
