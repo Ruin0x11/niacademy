@@ -8,12 +8,16 @@ ARG DATABASE_URL
 ARG IMAGES_PATH
 ARG GLOBAL_USER
 ARG PASSWORD
+ARG LETSENCRYPT_HOST
+ARG PORT
 
 ENV SECRET_KEY_BASE=$SECRET_KEY_BASE
 ENV DATABASE_URL=$DATABASE_URL
 ENV IMAGES_PATH=$IMAGES_PATH
 ENV GLOBAL_USER=$GLOBAL_USER
 ENV PASSWORD=$PASSWORD
+ENV LETSENCRYPT_HOST=$LETSENCRYPT_HOST
+ENV PORT=$PORT
 
 RUN mkdir /app
 WORKDIR /app
@@ -52,6 +56,11 @@ FROM alpine:3.9 AS app
 # install runtime dependencies
 RUN apk add --update bash openssl postgresql-client curl
 
+ARG UNAME=nia
+ARG UID=1000
+
+RUN adduser -S -D -u $UID $UNAME
+
 EXPOSE 4000
 ENV MIX_ENV=prod
 
@@ -62,9 +71,8 @@ WORKDIR /app
 # copy release to app container
 COPY --from=build /app/_build/prod/rel/niacademy .
 COPY entrypoint.sh .
-COPY config/regimens.yml .
-RUN chown -R nobody: /app
-USER nobody
+RUN chown -R $UNAME: /app
+USER $UNAME
 
 ENV HOME=/app
 CMD ["bash", "/app/entrypoint.sh"]

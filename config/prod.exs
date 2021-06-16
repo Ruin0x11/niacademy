@@ -10,7 +10,7 @@ use Mix.Config
 # which you should run after static files are built and
 # before starting your production server.
 config :niacademy, NiacademyWeb.Endpoint,
-  url: [host: System.get_env("LETSENCRYPT_HOST"), port: String.to_integer(System.get_env("VIRTUAL_PORT") || "80")],
+  url: [host: System.get_env("LETSENCRYPT_HOST"), port: String.to_integer(System.get_env("PORT") || "4000")],
   cache_static_manifest: "priv/static/cache_manifest.json"
 
 # Do not print debug messages in production

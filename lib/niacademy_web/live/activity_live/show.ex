@@ -112,7 +112,7 @@ defmodule NiacademyWeb.ActivityLive.Show do
     if socket.assigns.loaded do
       %{assigns: %{remaining: remaining}} = socket
 
-      set_timer(socket, remaining - 30)
+      set_timer(socket, remaining - 1)
     else
       socket
     end
