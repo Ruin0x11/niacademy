@@ -103,16 +103,26 @@ defmodule Niacademy.Db do
     end
   end
 
-  def create_session_changeset(params) do
-    with data <- arrayize(params),
-      resolved <- Enum.map(data, & resolve_one(&1)) do
+  defp do_create_changeset(data, show_controls) do
+    with resolved <- Enum.map(data, & resolve_one(&1)) do
       %{
         regimen_ids: Enum.map(resolved, & &1[:regimen_id]),
         activities: Jason.encode!(Enum.map(resolved, & &1[:activities]) |> Enum.concat),
         position: 0,
-        show_controls: !!params["show_controls"],
+        show_controls: show_controls,
         finished: false
       }
+    end
+  end
+
+  def create_session_changeset(params) do
+    arrayize(params) |> do_create_changeset(!!params["show_controls"])
+  end
+
+  def create_session_changeset_from_preset(preset_id) do
+    with preset <- Niacademy.Db.list_presets[preset_id] do
+      Enum.map(preset["regimenIds"], fn id -> %{ regimen_id: id, categories: [] } end)
+      |> do_create_changeset(false)
     end
   end
 end

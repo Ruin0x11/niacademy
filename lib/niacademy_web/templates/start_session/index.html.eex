@@ -16,7 +16,7 @@
           }
         },
         setPreset(preset_id) {
-            console.log(preset_id);
+          console.log(preset_id);
           if (preset_id == "(none)") {
             this.fields = [];
             this.addNewField();
@@ -29,9 +29,11 @@
             }
             console.log(this.fields);
           }
+          this.preset_id = preset_id
         }
       }
-      data.addNewField();
+      let preset_id = <%= "\"#{@current_preset_id}\"" |> raw() %>;
+      data.setPreset(preset_id);
       return data;
     }
 

@@ -1,0 +1,7 @@
+<div class="start-container">
+  <div class="links">
+    <div class="link-start"><%= link "START", to: Routes.activity_path(@conn, :create_from_preset, preset_id: @preset_id), method: :post %></div>
+    <div class="link-custom"><%= link "Custom...", to: Routes.start_session_path(@conn, :index) %></div>
+    <div class="current-preset">Preset: <%= @preset_name %></div>
+  </div>
+</div>

@@ -18,10 +18,12 @@ defmodule NiacademyWeb.Router do
   scope "/", NiacademyWeb do
     pipe_through :browser
 
-    get "/", StartSessionController, :index
+    get "/", StartController, :index
+    get "/start_session", StartSessionController, :index
     resources "/sessions", SessionController
-    live "/activity/:session_id", ActivityLive.Show, :show, as: :activity_live
-    post "/activity", ActivityController, :create
+    live "/activity/show/:session_id", ActivityLive.Show, :show, as: :activity_live
+    post "/activity/create", ActivityController, :create
+    post "/activity/create_from_preset", ActivityController, :create_from_preset
     get "/image", ImageController, :show
   end
 
