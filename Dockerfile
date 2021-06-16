@@ -1,7 +1,19 @@
-FROM elixir:1.11.3-alpine as build
+FROM elixir:1.10.3-alpine as build
 
 # install build dependencies
 RUN apk add --update git build-base nodejs npm yarn python
+
+ARG SECRET_KEY_BASE
+ARG DATABASE_URL
+ARG IMAGES_PATH
+ARG GLOBAL_USER
+ARG PASSWORD
+
+ENV SECRET_KEY_BASE=$SECRET_KEY_BASE
+ENV DATABASE_URL=$DATABASE_URL
+ENV IMAGES_PATH=$IMAGES_PATH
+ENV GLOBAL_USER=$GLOBAL_USER
+ENV PASSWORD=$PASSWORD
 
 RUN mkdir /app
 WORKDIR /app
@@ -50,6 +62,7 @@ WORKDIR /app
 # copy release to app container
 COPY --from=build /app/_build/prod/rel/niacademy .
 COPY entrypoint.sh .
+COPY config/regimens.yml .
 RUN chown -R nobody: /app
 USER nobody
 

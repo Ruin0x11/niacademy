@@ -12,6 +12,11 @@ services:
       args:
         - SECRET_KEY_BASE=${SECRET_KEY_BASE}
         - DATABASE_URL=ecto://postgres:postgres@db/postgres
+        - IMAGES_PATH=/app/images
+        - GLOBAL_USER=nonbirithm
+        - PASSWORD=dood
+        - VIRTUAL_HOST=niacademy.nori.moe
+        - LETSENCRYPT_HOST=niacademy.nori.moe
     environment:
       - SECRET_KEY_BASE=${SECRET_KEY_BASE}
       - DATABASE_HOST=db
@@ -21,10 +26,12 @@ services:
       - IMAGES_PATH=/app/images
       - GLOBAL_USER=nonbirithm
       - PASSWORD=dood
+      - VIRTUAL_HOST=niacademy.nori.moe
+      - LETSENCRYPT_HOST=niacademy.nori.moe
     volumes:
-      - /path/to/images:/app/images
+      - /home/hiro/build/work/niacademy/lib/images:/app/images
     ports:
-      - 4000:4000
+      - 4000:80
     networks:
       - niacademy_net
     depends_on:

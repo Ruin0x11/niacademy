@@ -10,7 +10,7 @@ let liveSocket = new LiveSocket("/live", Socket, {
       if (from.__x) {
         window.Alpine.clone(from.__x, to);
       }
-    },
+    }
   },
   params: { _csrf_token: csrfToken },
   hooks: Hooks

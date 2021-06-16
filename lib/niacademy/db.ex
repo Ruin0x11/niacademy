@@ -7,7 +7,7 @@ defmodule Niacademy.Db do
   end
 
   def parse do
-    with {:ok, yaml} <- Yaml.read_from_file("config/regimens.yml") do
+    with {:ok, yaml} <- Application.get_env(:niacademy, :regimens_file) |> Yaml.read_from_file do
       %{
         "activities" => mapify(yaml["activities"]),
         "regimens" => mapify(yaml["regimens"]),

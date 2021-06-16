@@ -36,16 +36,9 @@ password = System.get_env("PASSWORD") || "dood"
 
 config :niacademy,
   images_dir: images_path,
-  global_user: global_user
+  global_user: global_user,
+  regimens_file: "/app/regimens.yml"
 
 config :niacademy, :basic_auth, username: global_user, password: password
 
-# ## Using releases (Elixir v1.9+)
-#
-# If you are doing OTP releases, you need to instruct Phoenix
-# to start each relevant endpoint:
-#
-#     config :niacademy, NiacademyWeb.Endpoint, server: true
-#
-# Then you can assemble a release by calling `mix release`.
-# See `mix help release` for more information.
+config :niacademy, NiacademyWeb.Endpoint, server: true

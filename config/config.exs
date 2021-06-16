@@ -10,6 +10,7 @@ use Mix.Config
 config :niacademy,
   ecto_repos: [Niacademy.Repo],
   images_dir: "lib/images",
+  regimens_file: "lib/regimens.yml",
   global_user: "nonbirithm"
 
 config :niacademy, :basic_auth, username: "nonbirithm", password: "dood"
