@@ -1,0 +1,42 @@
+version: "3"
+
+networks:
+  niacademy_net:
+    external: false
+
+services:
+  app:
+    image: niacademy:0.1.0
+    build:
+      context: .
+      args:
+        - SECRET_KEY_BASE=${SECRET_KEY_BASE}
+        - DATABASE_URL=ecto://postgres:postgres@db/postgres
+    environment:
+      - SECRET_KEY_BASE=${SECRET_KEY_BASE}
+      - DATABASE_HOST=db
+      - DATABASE_USER=postgres
+      - DATABASE_DB=postgres
+      - DATABASE_URL=ecto://postgres:postgres@db/postgres
+      - IMAGES_PATH=/app/images
+      - GLOBAL_USER=nonbirithm
+      - PASSWORD=dood
+    volumes:
+      - /path/to/images:/app/images
+    ports:
+      - 4000:4000
+    networks:
+      - niacademy_net
+    depends_on:
+      - db
+
+  db:
+    image: postgres:9.6
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    networks:
+      - niacademy_net

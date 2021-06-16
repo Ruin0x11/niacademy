@@ -3,8 +3,8 @@ defmodule Mix.Tasks.CompileRegimens do
 
   @shortdoc "Compiles regimen description file."
   def run(_) do
-    input_path = "lib/regimens.dhall"
-    output_path = "lib/regimens.yml"
+    input_path = "config/regimens.dhall"
+    output_path = "config/regimens.yml"
 
     case System.cmd("dhall-to-yaml", ["--file", input_path, "--output", output_path]) do
       {_, 0} -> IO.puts("Wrote #{output_path}.")

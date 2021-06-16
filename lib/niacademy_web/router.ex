@@ -1,9 +1,11 @@
 defmodule NiacademyWeb.Router do
   use NiacademyWeb, :router
   import Phoenix.LiveView.Router
+  import Plug.BasicAuth
 
   pipeline :browser do
     plug :accepts, ["html"]
+    plug :basic_auth, Application.compile_env(:niacademy, :basic_auth)
     plug :fetch_session
     plug :fetch_live_flash
     plug :protect_from_forgery

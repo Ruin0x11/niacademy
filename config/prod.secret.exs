@@ -30,6 +30,16 @@ config :niacademy, NiacademyWeb.Endpoint,
   ],
   secret_key_base: secret_key_base
 
+images_path = System.get_env("IMAGES_PATH") || "/app/images"
+global_user = System.get_env("GLOBAL_USER") || "nonbirithm"
+password = System.get_env("PASSWORD") || "dood"
+
+config :niacademy,
+  images_dir: images_path,
+  global_user: global_user
+
+config :niacademy, :basic_auth, username: global_user, password: password
+
 # ## Using releases (Elixir v1.9+)
 #
 # If you are doing OTP releases, you need to instruct Phoenix

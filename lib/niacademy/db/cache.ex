@@ -10,7 +10,7 @@ defmodule Niacademy.Db.Cache do
       case data do
         nil -> Niacademy.Db.Cache.reload
         data ->
-          with {:ok, stat} <- File.lstat("lib/regimens.yml"),
+          with {:ok, stat} <- File.lstat("config/regimens.yml"),
                {:ok, mtime} <- NaiveDateTime.from_erl(stat.mtime),
                  mtime <- DateTime.from_naive!(mtime, "Etc/UTC") do
             if DateTime.compare(last_updated, mtime) == :lt do

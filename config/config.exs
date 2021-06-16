@@ -12,6 +12,8 @@ config :niacademy,
   images_dir: "lib/images",
   global_user: "nonbirithm"
 
+config :niacademy, :basic_auth, username: "nonbirithm", password: "dood"
+
 # Configures the endpoint
 config :niacademy, NiacademyWeb.Endpoint,
   url: [host: "localhost"],

@@ -9,5 +9,3 @@
 #
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
-
-Niacademy.Repo.insert!(%Niacademy.User{username: "nonbirithm", preset_position: 0})

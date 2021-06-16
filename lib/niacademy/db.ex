@@ -7,7 +7,7 @@ defmodule Niacademy.Db do
   end
 
   def parse do
-    with {:ok, yaml} <- Yaml.read_from_file("lib/regimens.yml") do
+    with {:ok, yaml} <- Yaml.read_from_file("config/regimens.yml") do
       %{
         "activities" => mapify(yaml["activities"]),
         "regimens" => mapify(yaml["regimens"]),
@@ -100,10 +100,12 @@ defmodule Niacademy.Db do
   end
 
   def get_global_user do
-    with username <- Application.get_env(:niacademy, :global_user) do
-      Niacademy.User
-      |> Ecto.Query.where([u], u.username == ^username)
-      |> Niacademy.Repo.one
+    with username <- Application.get_env(:niacademy, :global_user),
+         user <- Niacademy.User |> Ecto.Query.where([u], u.username == ^username) |> Niacademy.Repo.one do
+      case user do
+        nil -> Niacademy.Repo.insert!(%Niacademy.User{username: username, preset_position: 0})
+        user -> user
+      end
     end
   end
 

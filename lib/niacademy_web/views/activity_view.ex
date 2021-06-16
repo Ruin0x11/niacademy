@@ -35,9 +35,6 @@ defmodule NiacademyWeb.ActivityView do
     end
   end
 
-  defp render_single_image(image_file) do
-  end
-
   def render_image_content(source) do
     case source["extra"]["imageFiles"] do
       [image_file] ->
