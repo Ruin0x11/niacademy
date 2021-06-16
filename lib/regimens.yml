@@ -21,6 +21,14 @@ activities:
           - female_clothed/test/rina1.png
         imageCount: 10
       type: Categories
+presetOrder:
+  - fig_dab2_3
+presets:
+  - humanName: Figures/DaB 2.3 Dissections
+    id: fig_dab2_3
+    regimenIds:
+      - figure_30
+      - textures
 regimens:
   - activities:
       - activityId: image-custom

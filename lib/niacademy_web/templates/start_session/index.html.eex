@@ -2,16 +2,32 @@
   <script type="text/javascript">
     function form_handler() {
       let data = {
+        preset_id: "",
         fields: [],
+        presets: <%= Jason.encode!(@presets) |> raw() %>,
         addNewField() {
           this.fields.push({
-            show_controls: false,
             regimen_id: ''
           });
         },
         removeField(index) {
           if (this.fields.length > 1) {
             this.fields.splice(index, 1);
+          }
+        },
+        setPreset(preset_id) {
+            console.log(preset_id);
+          if (preset_id == "(none)") {
+            this.fields = [];
+            this.addNewField();
+          } else {
+            let preset = this.presets[preset_id];
+            console.log(preset.regimenIds);
+            this.fields = [];
+            for (i = 0; i < preset.regimenIds.length; i++) {
+              this.fields[i] = { regimen_id: preset.regimenIds[i] };
+            }
+            console.log(this.fields);
           }
         }
       }
@@ -44,6 +60,11 @@
   <div class="info-container">
     <section class="regimens" x-data="form_handler()">
       <%= form_tag Routes.activity_path(@conn, :create) do %>
+      <select id="preset_id" name="preset_id" x-model="preset_id" x-on:change="setPreset(preset_id)">
+        <%= for {id, preset} <- @presets do %>
+            <option value="<%= id %>"><%= preset["humanName"]%></option>
+            <% end %>
+      </select>
       <template x-for="(field, index) in fields" :key="index">
         <div class="regimen-container">
           <div class="regimen-form" :data-index="index">

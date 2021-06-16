@@ -35,6 +35,10 @@ let Regimen
       , activities : List ActivitySegment
       }
 
+let Preset
+    : Type
+    = { id : Text, humanName : Text, regimenIds : List Text }
+
 let generateActivityList =
       \(activityId : Text) ->
       \(durations : List Natural) ->
@@ -99,12 +103,28 @@ let regimens
         }
       ]
 
+let presets
+    : List Preset
+    = [ { id = "fig_dab2_3"
+        , humanName = "Figures/DaB 2.3 Dissections"
+        , regimenIds = [ "figure_30", "textures" ]
+        }
+      ]
+
+let presetOrder
+    : List Text
+    = [ "fig_dab2_3" ]
+
 let Config
     : Type
-    = { activities : List Activity, regimens : List Regimen }
+    = { activities : List Activity
+      , regimens : List Regimen
+      , presets : List Preset
+      , presetOrder : List Text
+      }
 
 let config
     : Config
-    = { activities, regimens }
+    = { activities, regimens, presets, presetOrder }
 
 in  config

@@ -1,10 +1,17 @@
 defmodule Niacademy.Db do
   alias YamlElixir, as: Yaml
+
+  defp mapify(list_with_ids) do
+    Enum.map(list_with_ids, fn t -> {t["id"], t} end) |> Enum.into(%{})
+  end
+
   def parse do
     with {:ok, yaml} <- Yaml.read_from_file("lib/regimens.yml") do
       %{
-        "activities" => Enum.map(yaml["activities"], fn activity -> {activity["id"], activity} end) |> Enum.into(%{}),
-        "regimens" => Enum.map(yaml["regimens"], fn regimen -> {regimen["id"], regimen} end) |> Enum.into(%{})
+        "activities" => mapify(yaml["activities"]),
+        "regimens" => mapify(yaml["regimens"]),
+        "presets" => mapify(yaml["presets"]),
+        "presetOrder" => yaml["presetOrder"]
       }
     end
   end
@@ -25,6 +32,14 @@ defmodule Niacademy.Db do
       nil -> raise "Unknown activity #{id}"
       activity -> activity
     end
+  end
+
+  def list_presets do
+    Niacademy.Db.Cache.get["presets"]
+  end
+
+  def get_preset_order do
+    Niacademy.Db.Cache.get["presetOrder"]
   end
 
   def resolve_activity(id, args) do

@@ -4,6 +4,7 @@ defmodule NiacademyWeb.StartSessionController do
   def index(conn, _params) do
     render(conn, "index.html",
       regimens: Niacademy.Db.list_regimens,
-      image_categories: Niacademy.Images.list_categories)
+      image_categories: Niacademy.Images.list_categories,
+      presets: Niacademy.Db.list_presets |> Map.put("(none)", %{"humanName" => "(none)"}))
   end
 end
