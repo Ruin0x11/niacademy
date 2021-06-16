@@ -1,9 +1,9 @@
 defmodule Niacademy.Images do
   def scan do
-    load_sub_dir = fn sub_dir -> {Path.basename(sub_dir), Path.wildcard(Path.join(sub_dir, "*"))} end
-    load_main_dir = fn main_dir -> {Path.basename(main_dir), Enum.map(Path.wildcard(Path.join(main_dir, "*")), load_sub_dir) |> Enum.into(%{})} end
-
     images_dir = Application.get_env(:niacademy, :images_dir)
+
+    load_sub_dir = fn sub_dir -> {Path.basename(sub_dir), Path.wildcard(Path.join(sub_dir, "*")) |> Enum.map(fn dir -> Path.relative_to(dir, images_dir) end)} end
+    load_main_dir = fn main_dir -> {Path.basename(main_dir), Enum.map(Path.wildcard(Path.join(main_dir, "*")), load_sub_dir) |> Enum.into(%{})} end
 
     Enum.map(Path.wildcard(Path.join(images_dir, "*")), load_main_dir) |> Enum.into(%{})
   end

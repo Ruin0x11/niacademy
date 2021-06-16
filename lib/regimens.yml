@@ -14,8 +14,13 @@ activities:
     humanName: Dissections
     id: fundamentals_2_dissections
     source:
-      data: Dunn
-      type: Freeform
+      data:
+        categories:
+          - textures/pinterest
+        files:
+          - female_clothed/test/rina1.png
+        imageCount: 10
+      type: Categories
 regimens:
   - activities:
       - activityId: image-custom
@@ -50,7 +55,7 @@ regimens:
         unboundedDuration: false
       - activityId: image-custom
         durationMinutes: 10
-        unboundedDuration: true
+        unboundedDuration: false
     defaultCategories: []
     humanName: "Figure drawing (30 minutes, 1-1-1-1-1-1-2-2-5-5-10)"
     id: figure_30

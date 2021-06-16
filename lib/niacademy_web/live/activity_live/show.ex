@@ -136,17 +136,15 @@ defmodule NiacademyWeb.ActivityLive.Show do
     end
   end
 
+  defp activate(%{assigns: %{activity: activity, mode: :paused}} = socket) do
+    {:ok, timer} = :timer.send_interval(1000, :tick)
+
+    total_seconds = (activity["durationMinutes"]) * 60
+
+    socket |> assign(mode: :active, total: total_seconds, timer: timer) |> set_timer(total_seconds)
+  end
+
   defp activate(socket) do
-    if socket.assigns.activity do
-      {:ok, timer} = :timer.send_interval(1000, :tick)
-
-      %{assigns: %{activity: activity}} = socket
-
-      total_seconds = (activity["durationMinutes"]) * 60
-
-      socket |> assign(mode: :active, total: total_seconds, timer: timer) |> set_timer(total_seconds)
-    else
-      socket
-    end
+    socket
   end
 end

@@ -35,22 +35,35 @@ defmodule NiacademyWeb.ActivityView do
     end
   end
 
+  defp render_single_image(image_file) do
+    src = Routes.image_path(Endpoint, :show, image_file: image_file)
+      """
+      <img class="image-content" src="#{src}" alt="Content" phx-hook="ContentLoaded"/>
+      """
+  end
+
   def render_image_content(source) do
-    image_files = source["extra"]["imageFiles"]
-
-    imgs = Enum.map(image_files, fn image_file ->
-      src = Routes.image_path(Endpoint, :show, image_file: image_file)
-      """
-      <img id="image-content" class="image-content" src="#{src}" alt="Content" phx-hook="ContentLoaded"/>
-      """
-    end)
-
-    Enum.concat(imgs, '\n')
+    case source["extra"]["imageFiles"] do
+      [image_file] ->
+        img = render_single_image(image_file)
+        """
+        <div id="image-content" class="image-single">
+        #{img}
+        </div>
+        """
+      image_files ->
+        imgs = Enum.map(image_files, fn image_file -> render_single_image(image_file) end) |> Enum.concat('\n')
+        """
+        <div id="image-content" class="image-grid">
+        #{imgs}
+        </div>
+        """
+    end
   end
 
   def render_freeform_content(source) do
-    """
-    <h1 id="content" phx-hook="ContentLoadedText"/>#{source["data"]}</h1>
-    """
+      """
+      <h1 id="content" phx-hook="ContentLoadedText"/>#{source["data"]}</h1>
+      """
   end
 end

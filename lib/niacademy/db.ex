@@ -50,9 +50,10 @@ defmodule Niacademy.Db do
   end
 
   defp do_resolve_activity(%{"source" => %{"type" => "Categories", "data" => data}} = activity, _args) do
-    images = Niacademy.Images.list_for_categories(data)
-    image_file = images |> Enum.random
-    extra = %{"imageFiles" => [image_file]}
+    images = Niacademy.Images.list_for_categories(data["categories"])
+    image_files = images |> Enum.take_random(data["imageCount"])
+    image_files = data["files"] |> Enum.concat(image_files)
+    extra = %{"imageFiles" => image_files}
 
     MapUtils.deep_merge(activity, %{"source" => %{"extra" => extra}})
   end

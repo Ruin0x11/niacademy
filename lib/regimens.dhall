@@ -4,8 +4,12 @@ let List/map = https://prelude.dhall-lang.org/v15.0.0/List/map
 
 let SourceType = < File | Categories | Freeform | Custom >
 
+let Categories
+    : Type
+    = { categories : List Text, imageCount : Natural, files : List Text }
+
 let SourceData =
-      < File : List Text | Categories : List Text | Freeform : Text | Custom >
+      < File : List Text | Categories : Categories | Freeform : Text | Custom >
 
 let Source
     : Type
@@ -61,8 +65,13 @@ let activities
           , humanName = "Dissections"
           , description = Some "Dissections exercise"
           , source =
-            { type = SourceType.Freeform
-            , data = SourceData.Freeform "Dissections"
+            { type = SourceType.Categories
+            , data =
+                SourceData.Categories
+                  { categories = [ "textures/pinterest" ]
+                  , imageCount = 10
+                  , files = [ "female_clothed/test/rina1.png" ] : List Text
+                  }
             }
           }
         : Activity
