@@ -48,7 +48,8 @@ defmodule Niacademy.MixProject do
       {:yaml_elixir, "~> 2.7.0"},
       {:phoenix_live_view, "~> 0.14"},
       {:timex, "~> 3.7.4"},
-      {:togglex, github: "Ruin0x11/togglex", branch: "develop"}
+      {:togglex, github: "Ruin0x11/togglex", branch: "develop"},
+      {:ecto_enum, "~> 1.4"}
     ]
   end
 

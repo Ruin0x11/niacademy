@@ -11,6 +11,8 @@ let Categories
 let SourceData =
       < File : List Text | Categories : Categories | Freeform : Text | Custom >
 
+let ProjectType = < Tutorial | Free >
+
 let Source
     : Type
     = { type : SourceType, data : SourceData }
@@ -21,6 +23,7 @@ let Activity
       , humanName : Text
       , description : Optional Text
       , source : Source
+      , projectType : ProjectType
       }
 
 let ActivitySegment
@@ -60,6 +63,7 @@ let activities
           , humanName = "Reference Image"
           , description = None Text
           , source = { type = SourceType.Custom, data = SourceData.Custom }
+          , projectType = ProjectType.Tutorial
           }
         : Activity
       ,   { id = "dunn"
@@ -67,6 +71,7 @@ let activities
           , description = Some "Workbook."
           , source =
             { type = SourceType.Freeform, data = SourceData.Freeform "Dunn" }
+          , projectType = ProjectType.Tutorial
           }
         : Activity
       ,   { id = "fundamentals_2_dissections"
@@ -81,6 +86,17 @@ let activities
                   , files = [ "female_clothed/test/rina1.png" ] : List Text
                   }
             }
+          , projectType = ProjectType.Tutorial
+          }
+        : Activity
+      ,   { id = "free_draw"
+          , humanName = "Free Draw"
+          , description = None Text
+          , source =
+            { type = SourceType.Freeform
+            , data = SourceData.Freeform "Free draw."
+            }
+          , projectType = ProjectType.Free
           }
         : Activity
       ]
@@ -123,16 +139,28 @@ let presets
         }
       ]
 
-let presetOrder
+let PresetOrder
+    : Type
+    = { tutorial : List Text, free : List Text }
+
+let presetOrderTutorial
     : List Text
     = [ "fig_dab2_3", "test" ]
+
+let presetOrderFree
+    : List Text
+    = [ "fig_dab2_3", "test" ]
+
+let presetOrder
+    : PresetOrder
+    = { tutorial = presetOrderTutorial, free = presetOrderFree }
 
 let Config
     : Type
     = { activities : List Activity
       , regimens : List Regimen
       , presets : List Preset
-      , presetOrder : List Text
+      , presetOrder : PresetOrder
       }
 
 let config

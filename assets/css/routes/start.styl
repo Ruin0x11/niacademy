@@ -1,7 +1,54 @@
+$tutorial-color = #f0ad4e;
+$free-color = #5cb85c;
+$padding = 30px;
+
+.tutorial-type
+  color: $tutorial-color;
+.free-type
+  color: $free-color;
+
+.tutorial-link
+  color: transparentify($tutorial-color, #fff, 0.8);
+  &:hover
+    color: transparentify($tutorial-color, #fff, 0.6);
+.free-link
+  color: transparentify($free-color, #fff, 0.8);
+  &:hover
+    color: transparentify($free-color, #fff, 0.6);
+
 .start-container
-    padding: 40px;
+    padding: $padding;
     width: 100%;
     height: 100%;
+
+    .tracked-stats, .project-type
+        border-radius: 6px;
+        padding: .5rem;
+        background-color: rgb(31, 32, 32);
+        border: 1px solid rgb(100, 95, 87);
+        font-weight: bolder;
+
+    .tracked-stats
+        position: absolute;
+        font-size: 30px;
+        .tutorial-time
+            color: $tutorial-color;
+            .minutes
+               color: transparentify($tutorial-color, #fff, 0.8);
+            .hours
+               color: transparentify($tutorial-color, #fff, 0.6);
+        .free-time
+            color: $free-color;
+            .minutes
+               color: transparentify($free-color, #fff, 0.8);
+            .hours
+               color: transparentify($free-color, #fff, 0.6);
+
+    .project-type
+        position: absolute;
+        font-size: 15px;
+        right: $padding;
+
     .links
         display: flex;
         align-items: center;
@@ -11,6 +58,7 @@
         margin: auto;
         width: 100%;
         height: 100%;
+
         .link-start
           font-size: 80px;
         .link-custom

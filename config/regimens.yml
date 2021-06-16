@@ -1,18 +1,21 @@
 activities:
   - humanName: Reference Image
     id: image-custom
+    projectType: Tutorial
     source:
       data: Custom
       type: Custom
   - description: Workbook.
     humanName: Dunn
     id: dunn
+    projectType: Tutorial
     source:
       data: Dunn
       type: Freeform
   - description: Dissections exercise
     humanName: Dissections
     id: fundamentals_2_dissections
+    projectType: Tutorial
     source:
       data:
         categories:
@@ -21,9 +24,19 @@ activities:
           - female_clothed/test/rina1.png
         imageCount: 10
       type: Categories
+  - humanName: Free Draw
+    id: free_draw
+    projectType: Free
+    source:
+      data: Free draw.
+      type: Freeform
 presetOrder:
-  - fig_dab2_3
-  - test
+  free:
+    - fig_dab2_3
+    - test
+  tutorial:
+    - fig_dab2_3
+    - test
 presets:
   - humanName: Figures/DaB 2.3 Dissections
     id: fig_dab2_3

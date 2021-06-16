@@ -6,7 +6,8 @@ defmodule Niacademy.User do
   alias Niacademy.User
 
   schema "users" do
-    field :preset_position, :integer
+    field :preset_position_tutorial, :integer, default: 0
+    field :preset_position_free, :integer, default: 0
     field :username, :string
 
     timestamps()
@@ -15,8 +16,8 @@ defmodule Niacademy.User do
   @doc false
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:preset_position, :username])
-    |> validate_required([:preset_position, :username])
+    |> cast(attrs, [:preset_position_tutorial, :preset_position_free, :username])
+    |> validate_required([:preset_position_tutorial, :preset_position_free, :username])
     |> unique_constraint(:username)
   end
 
@@ -112,5 +113,18 @@ defmodule Niacademy.User do
   """
   def change(%User{} = user, attrs \\ %{}) do
     User.changeset(user, attrs)
+  end
+
+  def get_preset_position_key(type) do
+    case type do
+      :tutorial -> :preset_position_tutorial
+      :free -> :preset_position_free
+      _ -> raise "Unknown preset type #{type}"
+    end
+  end
+
+  def get_preset_position(%User{} = user, type) do
+    key = get_preset_position_key(type)
+    get_in(user, [Access.key!(key)])
   end
 end

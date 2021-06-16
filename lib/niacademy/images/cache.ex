@@ -8,7 +8,7 @@ defmodule Niacademy.Images.Cache do
   def get do
     with %{data: data} <- Agent.get(__MODULE__, & &1) do
       case data do
-        nil -> Niacademy.Images.scan
+        nil -> Niacademy.Images.Cache.reload
         data -> data
       end
     end

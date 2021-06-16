@@ -17,9 +17,11 @@ defmodule Niacademy.Application do
       NiacademyWeb.Endpoint,
       # Start a worker by calling: Niacademy.Worker.start_link(arg)
       # {Niacademy.Worker, arg}
-      {Niacademy.Db.Cache, []},
-      {Niacademy.Images.Cache, []},
-      Niacademy.Jobs.CleanSessions
+      Niacademy.Db.Cache,
+      Niacademy.Images.Cache,
+      Niacademy.Tracking.Cache,
+      Niacademy.Jobs.CleanSessions,
+      Niacademy.Jobs.TrackerTimeout
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

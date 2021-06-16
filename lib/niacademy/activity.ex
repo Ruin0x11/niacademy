@@ -1,6 +1,6 @@
 defmodule Niacademy.Activity do
-  def resolve(id, args) do
-    Niacademy.Db.get_activity(id) |> do_resolve(args)
+  def resolve(id, args, regimen_id) do
+    Niacademy.Db.get_activity(id) |> do_resolve(args) |> Map.put("regimenId", regimen_id)
   end
 
   defp do_resolve(%{"source" => %{"type" => "Custom"}} = activity, args) do

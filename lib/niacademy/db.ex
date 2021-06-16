@@ -1,6 +1,7 @@
 defmodule Niacademy.Db do
   alias YamlElixir, as: Yaml
   require Ecto.Query
+  alias Niacademy.User
 
   defp mapify(list_with_ids) do
     Enum.map(list_with_ids, fn t -> {t["id"], t} end) |> Enum.into(%{})
@@ -39,17 +40,24 @@ defmodule Niacademy.Db do
     Niacademy.Db.Cache.get["presets"]
   end
 
-  def get_preset_order do
-    Niacademy.Db.Cache.get["presetOrder"]
+  def get_preset_order(type) do
+    key = case type do
+            :tutorial -> "tutorial"
+            :free -> "free"
+            _ -> raise "Unknown preset type #{type}"
+          end
+    Niacademy.Db.Cache.get["presetOrder"][key]
   end
 
   defp resolve_one(args) do
     with regimen <- Niacademy.Db.list_regimens[args[:regimen_id]],
          categories <- args[:categories] || regimen["defaultCategories"],
-         activity_args <- %{categories: categories, regimen: regimen} do
+           activity_args <- %{categories: categories, regimen: regimen},
+           regimen_id <- args[:regimen_id]
+      do
       %{
-        regimen_id: args[:regimen_id],
-        activities: regimen["activities"] |> Enum.map(& Map.put(&1, :activity, Niacademy.Activity.resolve(&1["activityId"], activity_args))),
+        regimen_id: regimen_id,
+        activities: regimen["activities"] |> Enum.map(& Map.put(&1, :activity, Niacademy.Activity.resolve(&1["activityId"], activity_args, regimen_id))),
         categories: categories
       }
     end
@@ -85,7 +93,7 @@ defmodule Niacademy.Db do
     arrayize(params) |> do_create_changeset(!!params["show_controls"])
   end
 
-  def create_session_changeset_from_preset(preset_id) do
+  def create_session_changeset_from_preset(preset_id, project_type) do
     with preset <- Niacademy.Db.list_presets[preset_id] do
       Enum.map(preset["regimens"], fn t ->
         regimen_id = t["regimenId"]
@@ -95,7 +103,8 @@ defmodule Niacademy.Db do
         %{ regimen_id: regimen_id, categories: categories }
       end)
       |> do_create_changeset(false)
-      |> Map.put(:tracking_preset, true)
+      |> Map.put(:preset_id, preset_id)
+      |> Map.put(:project_type, project_type)
     end
   end
 
@@ -103,30 +112,41 @@ defmodule Niacademy.Db do
     with username <- Application.get_env(:niacademy, :global_user),
          user <- Niacademy.User |> Ecto.Query.where([u], u.username == ^username) |> Niacademy.Repo.one do
       case user do
-        nil -> Niacademy.Repo.insert!(%Niacademy.User{username: username, preset_position: 0})
+        nil -> Niacademy.Repo.insert!(%Niacademy.User{username: username})
         user -> user
       end
     end
   end
 
-  def get_current_preset do
+  def get_optimal_project do
+    with %{ratio: ratio} <- Niacademy.Tracking.Cache.get_stats() do
+      cond do
+        ratio < 0.5 -> :free
+        ratio > 2.0 -> :tutorial
+        true        -> :tutorial
+      end
+    end
+  end
+
+  def get_current_preset(type \\ get_optimal_project()) do
     with user <- Niacademy.Db.get_global_user,
-         preset_order <- Niacademy.Db.get_preset_order,
-           pos <- rem(user.preset_position, Enum.count(preset_order)) do
+         preset_order <- Niacademy.Db.get_preset_order(type),
+           pos <- rem(User.get_preset_position(user, type), Enum.count(preset_order)) do
       {pos, preset_order |> Enum.at(pos)}
     end
   end
 
-  def set_preset_position(position) do
+  def set_preset_position(position, type) do
     with user <- Niacademy.Db.get_global_user,
-         preset_order <- Niacademy.Db.get_preset_order do
-      Niacademy.User.update(user, %{preset_position: rem(position, Enum.count(preset_order))})
+         preset_order <- Niacademy.Db.get_preset_order(type) do
+      key = User.get_preset_position_key(type)
+      Niacademy.User.update(user, Map.put(%{}, key, rem(position, Enum.count(preset_order))))
     end
   end
 
-  def increment_preset_position do
+  def increment_preset_position(type) do
     with user <- Niacademy.Db.get_global_user do
-      set_preset_position(user.preset_position + 1)
+      set_preset_position(User.get_preset_position(user, type) + 1, type)
     end
   end
 end

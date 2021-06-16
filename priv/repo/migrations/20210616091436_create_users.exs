@@ -3,7 +3,8 @@ defmodule Niacademy.Repo.Migrations.CreateUsers do
 
   def change do
     create table(:users) do
-      add :preset_position, :integer
+      add :preset_position_tutorial, :integer
+      add :preset_position_free, :integer
       add :username, :string
 
       timestamps()

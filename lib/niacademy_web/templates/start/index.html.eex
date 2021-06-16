@@ -1,7 +1,13 @@
 <div class="start-container">
+  <div class="tracked-stats">
+    <%= format_time @tutorial_draw_time, "tutorial-time" %>
+    <span>/</span>
+    <%= format_time @free_draw_time, "free-time" %>
+  </div>
+  <%= format_project_type @project_type %>
   <div class="links">
-    <div class="link-start"><%= link "START", to: Routes.activity_path(@conn, :create_from_preset, preset_id: @preset_id), method: :post %></div>
+    <div class="link-start"><%= link "START", to: Routes.activity_path(@conn, :create_from_preset, preset_id: @preset_id, type: @project_type), method: :post, class: link_class(@project_type) %></div>
     <div class="link-custom"><%= link "Custom...", to: Routes.start_session_path(@conn, :index) %></div>
-    <div class="current-preset">Preset: <%= @preset_name %></div>
+    <div class="current-preset">Preset: <%= @preset["humanName"] %></div>
   </div>
 </div>

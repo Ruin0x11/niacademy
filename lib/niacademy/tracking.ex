@@ -1,5 +1,6 @@
 defmodule Niacademy.Tracking do
   require Togglex
+  require Logger
 
   def client do
     with token <- Application.get_env(:niacademy, :toggl_api_token) do
@@ -15,13 +16,8 @@ defmodule Niacademy.Tracking do
     end
   end
 
-  def projects do
-    client()
-    |> Togglex.Api.Workspaces.projects(workspace()[:id])
-  end
-
   defp find_project(project_name) do
-    projects()
+    Niacademy.Tracking.Cache.get_projects()
     |> Enum.find(fn project -> project[:name] == project_name end)
     |> Map.get(:id)
   end
@@ -43,41 +39,49 @@ defmodule Niacademy.Tracking do
     end
   end
 
-  def project_time_spent(project_id, since) do
+  def since_time, do: Timex.now |> Timex.shift(Application.get_env(:niacademy, :toggl_tracking_interval))
+
+  def project_time_spent(project_id, since \\ since_time()) do
     project_time_entries(project_id, since)
     |> Enum.map(& &1[:duration])
     |> Enum.sum
   end
 
-  def since_time, do: Timex.now |> Timex.shift(Application.get_env(:niacademy, :toggl_tracking_interval))
-
-  def free_to_tutorial_ratio do
-    with free_draw_time <- free_draw_project() |> project_time_spent(since_time()),
-         tutorial_draw_time <- tutorial_draw_project() |> project_time_spent(since_time()) do
-      cond do
-        tutorial_draw_time == 0 -> 100 / 1  # do tutorial draw next
-        free_draw_time == 0     -> 1 / 100  # do free draw next
-        true                    -> free_draw_time / tutorial_draw_time
-      end
+  def tutorial_to_free_ratio(tutorial_draw_time, free_draw_time) do
+    cond do
+      tutorial_draw_time == 0 -> 1 / 100  # do tutorial draw next
+      free_draw_time == 0     -> 100 / 1  # do free draw next
+      true                    -> tutorial_draw_time / free_draw_time
     end
   end
 
   def active_project do
     case client() |> Togglex.Api.TimeEntries.current |> Map.get(:data) do
-      nil -> :none
+      nil -> %{type: :none, time_entry: nil}
       time_entry ->
         with free <- free_draw_project(),
              tutorial <- tutorial_draw_project() do
-          case time_entry[:pid] do
-            ^free -> :free_draw
-            ^tutorial -> :tutorial_draw
-            _ -> :unknown
+          type = case time_entry[:pid] do
+            ^free -> :free
+            ^tutorial -> :tutorial
+            _ -> :none
           end
+          %{type: type, time_entry: time_entry}
         end
     end
   end
 
+  def project_type_to_project(project_type) do
+    case project_type do
+      :tutorial -> tutorial_draw_project()
+      :free -> free_draw_project()
+      _ -> raise "Invalid project type"
+    end
+  end
+
   def start_tracking(project_id, description \\ "niacademy", tags \\ []) do
+    Logger.debug("Tracking: #{project_id}  #{description}  #{tags}")
+    Niacademy.Tracking.Cache.invalidate()
     with data <- %{pid: project_id, description: description, tags: tags} do
       client()
       |> Togglex.Api.TimeEntries.start(data)
@@ -85,6 +89,7 @@ defmodule Niacademy.Tracking do
   end
 
   def stop_tracking_active do
+    Logger.debug("Stopping active tracking.")
     case client() |> Togglex.Api.TimeEntries.current |> Map.get(:data) do
       nil -> nil
       time_entry -> client() |> Togglex.Api.TimeEntries.stop(time_entry[:id])

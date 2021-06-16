@@ -13,6 +13,7 @@ defmodule NiacademyWeb.ActivityLive.Show do
        session: %Session{},
        remaining: 0,
        total: 0,
+       activity_count: 0,
        percent_elapsed: 0,
        display_minutes: 0,
        display_seconds: 0,
@@ -24,13 +25,15 @@ defmodule NiacademyWeb.ActivityLive.Show do
   @impl true
   def handle_params(%{"session_id" => session_id}, _val, socket) do
     session = Session.get!(session_id)
-    session = %{session | activities: Jason.decode!(session.activities)}
+    activities = Jason.decode!(session.activities)
+    session = %{session | activities: activities}
     activity = session.activities |> Enum.at(session.position)
 
     {:noreply, assign(socket,
        mode: :paused,
        session: session,
        activity: activity,
+       activity_count: Enum.count(activities),
        remaining: 0,
        total: 0,
        percent_elapsed: 0,
@@ -41,23 +44,25 @@ defmodule NiacademyWeb.ActivityLive.Show do
     }
   end
 
-  def set_position(%{assigns: %{session: session}} = socket, delta) do
+  def set_position(%{assigns: %{session: session, activity_count: activity_count}} = socket, delta) do
     with session <- Session.get!(session.id) do
       if session.position + delta < 0 do
                             raise "Can't go backward here."
-                            else
-                              finished = session.position + delta >= Enum.count(Jason.decode!(session.activities))
+      end
 
-                              if finished && session.tracking_preset && !session.finished do
-                                {:ok, _} = Niacademy.Db.increment_preset_position
-                              end
+      finished = session.position + delta >= activity_count
 
-                              case Session.update(session, %{position: session.position + delta, finished: finished}) do
-                                {:ok, session} ->
-                                  {:noreply, socket |> push_redirect(to: Routes.activity_live_path(socket, :show, session.id))}
-                                {:error, %Ecto.Changeset{} = changeset} ->
-                                  raise changeset
-                              end
+      if finished && session.project_type != :none && !session.finished do
+        {:ok, _} = Niacademy.Db.increment_preset_position(session.project_type)
+        Niacademy.Jobs.TrackerTimeout.cancel()
+        Niacademy.Tracking.stop_tracking_active()
+      end
+
+      case Session.update(session, %{position: session.position + delta, finished: finished}) do
+        {:ok, session} ->
+          {:noreply, socket |> push_redirect(to: Routes.activity_live_path(socket, :show, session.id))}
+        {:error, %Ecto.Changeset{} = changeset} ->
+          raise changeset
       end
     end
   end
@@ -142,10 +147,24 @@ defmodule NiacademyWeb.ActivityLive.Show do
     end
   end
 
-  defp activate(%{assigns: %{activity: activity, mode: :paused}} = socket) do
+  defp activate(%{assigns: %{session: session, activity: activity, activity_count: activity_count, mode: :paused}} = socket) do
     {:ok, timer} = :timer.send_interval(1000, :tick)
 
     total_seconds = (activity["durationMinutes"]) * 60
+
+    activity = activity["activity"]
+    description = "Activity: #{activity["humanName"]} (#{session.position+1}/#{activity_count})"
+    tags = [
+      "activity:#{activity["id"]}",
+      "preset:#{session.preset_id || "<none>"}",
+      "regimen:#{activity["regimenId"]}"
+    ]
+
+    session.project_type
+    |> Niacademy.Tracking.project_type_to_project
+    |> Niacademy.Tracking.start_tracking(description, tags)
+
+    Niacademy.Jobs.TrackerTimeout.persist(total_seconds * 1.5)
 
     socket |> assign(mode: :active, total: total_seconds, timer: timer) |> set_timer(total_seconds)
   end
