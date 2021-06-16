@@ -32,8 +32,7 @@ activities:
       type: Freeform
 presetOrder:
   free:
-    - fig_dab2_3
-    - test
+    - free_draw_15
   tutorial:
     - fig_dab2_3
     - test
@@ -49,6 +48,10 @@ presets:
     id: test
     regimens:
       - regimenId: textures
+  - humanName: "Free Draw (15 minutes)"
+    id: free_draw_15
+    regimens:
+      - regimenId: free_draw_15
 regimens:
   - activities:
       - activityId: image-custom
@@ -94,3 +97,10 @@ regimens:
     defaultCategories: []
     humanName: Textures
     id: textures
+  - activities:
+      - activityId: free_draw
+        durationMinutes: 15
+        unboundedDuration: true
+    defaultCategories: []
+    humanName: "Free Draw (15 minutes)"
+    id: free_draw_15

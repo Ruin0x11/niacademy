@@ -121,6 +121,16 @@ let regimens
             }
           ]
         }
+      , { id = "free_draw_15"
+        , humanName = "Free Draw (15 minutes)"
+        , defaultCategories = [] : List Text
+        , activities =
+          [ { activityId = "free_draw"
+            , durationMinutes = 15
+            , unboundedDuration = True
+            }
+          ]
+        }
       ]
 
 let presets
@@ -137,6 +147,11 @@ let presets
         , regimens =
           [ { regimenId = "textures", categories = None (List Text) } ]
         }
+      , { id = "free_draw_15"
+        , humanName = "Free Draw (15 minutes)"
+        , regimens =
+          [ { regimenId = "free_draw_15", categories = None (List Text) } ]
+        }
       ]
 
 let PresetOrder
@@ -149,7 +164,7 @@ let presetOrderTutorial
 
 let presetOrderFree
     : List Text
-    = [ "fig_dab2_3", "test" ]
+    = [ "free_draw_15" ]
 
 let presetOrder
     : PresetOrder

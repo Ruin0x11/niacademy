@@ -121,8 +121,8 @@ defmodule Niacademy.Db do
   def get_optimal_project do
     with %{ratio: ratio} <- Niacademy.Tracking.Cache.get_stats() do
       cond do
-        ratio < 0.5 -> :free
-        ratio > 2.0 -> :tutorial
+        ratio < 0.5 -> :tutorial
+        ratio > 2.0 -> :free
         true        -> :tutorial
       end
     end
