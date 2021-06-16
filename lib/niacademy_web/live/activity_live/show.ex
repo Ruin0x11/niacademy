@@ -3,6 +3,7 @@ defmodule NiacademyWeb.ActivityLive.Show do
   alias Niacademy.Session
   alias NiacademyWeb.ActivityView
   alias NiacademyWeb.Router.Helpers, as: Routes
+  require Logger
 
   @impl true
   def mount(_params, _session, socket) do
@@ -70,7 +71,7 @@ defmodule NiacademyWeb.ActivityLive.Show do
 
   @impl true
   def handle_event("content_loaded", _, socket) do
-    IO.puts("Loaded content!")
+    Logger.debug("Loaded content!")
     handle_event("start", %{}, socket |> assign(loaded: true))
   end
 

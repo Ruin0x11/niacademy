@@ -1,9 +1,5 @@
 use Mix.Config
 
-config :niacademy,
-  images_dir: "lib/images",
-  global_user: "nonbirithm"
-
 # Configure your database
 config :niacademy, Niacademy.Repo,
   username: "postgres",

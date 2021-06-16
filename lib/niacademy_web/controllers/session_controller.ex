@@ -1,6 +1,5 @@
 defmodule NiacademyWeb.SessionController do
   use NiacademyWeb, :controller
-  require Logger
 
   alias Niacademy.Session
 

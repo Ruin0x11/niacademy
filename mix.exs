@@ -46,7 +46,9 @@ defmodule Niacademy.MixProject do
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
       {:yaml_elixir, "~> 2.7.0"},
-      {:phoenix_live_view, "~> 0.14"}
+      {:phoenix_live_view, "~> 0.14"},
+      {:timex, "~> 3.7.4"},
+      {:togglex, github: "Ruin0x11/togglex", branch: "develop"}
     ]
   end
 
