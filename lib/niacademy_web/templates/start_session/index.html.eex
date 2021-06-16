@@ -5,6 +5,7 @@
         preset_id: "",
         fields: [],
         presets: <%= Jason.encode!(@presets) |> raw() %>,
+        presetOrder: <%= Jason.encode!(@preset_order) |> raw() %>,
         addNewField() {
           this.fields.push({
             regimen_id: '',
@@ -25,7 +26,7 @@
             let preset = this.presets[preset_id];
             this.fields = [];
             if ($refresh) {
-              // Multiselect categories will not be updated unless we do this.
+              // The multiselect component's categories will not be updated unless we do this.
               $refresh();
             }
             for (i = 0; i < preset.regimens.length; i++) {
@@ -104,6 +105,29 @@
       <div class="button-container">
         <button class="submit-button" type="submit" class="full-width">Start</button>
         <button class="add-button" type="button" x-on:click="addNewField()">+</button>
+      </div>
+      <% end %>
+    </section>
+  </div>
+
+  <br>
+  <h2>Change Current Preset</h2>
+  <div class="info-container">
+    <section class="regimens">
+      <%= form_tag Routes.activity_path(@conn, :set_preset_position) do %>
+      <select id="preset_position" name="preset_position">
+        <%= for {preset, position} <- Enum.with_index(@preset_order) do %>
+            <option value="<%= position %>"
+                    <%= if position == @current_preset_pos do %>
+                      selected="selected"
+                    <% end %>>
+              <%= preset["humanName"]%>
+            </option>
+            <% end %>
+      </select>
+      <br>
+      <div class="button-container">
+        <button class="submit-button" type="submit" class="full-width">Change</button>
       </div>
       <% end %>
     </section>

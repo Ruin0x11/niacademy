@@ -17,4 +17,13 @@ defmodule NiacademyWeb.ActivityController do
       |> redirect(to: Routes.activity_live_path(conn, :show, session.id))
     end
   end
+
+  def set_preset_position(conn, %{"preset_position" => preset_position}) do
+    with {pos, _} <- Integer.parse(preset_position),
+         {:ok, _} <- Niacademy.Db.set_preset_position(pos) do
+      conn
+      |> put_flash(:info, "Updated successfully.")
+      |> redirect(to: Routes.start_path(conn, :index))
+    end
+  end
 end

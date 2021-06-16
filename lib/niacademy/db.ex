@@ -111,7 +111,7 @@ defmodule Niacademy.Db do
     with user <- Niacademy.Db.get_global_user,
          preset_order <- Niacademy.Db.get_preset_order,
            pos <- rem(user.preset_position, Enum.count(preset_order)) do
-      preset_order |> Enum.at(pos)
+      {pos, preset_order |> Enum.at(pos)}
     end
   end
 

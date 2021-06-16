@@ -24,6 +24,7 @@ defmodule NiacademyWeb.Router do
     live "/activity/show/:session_id", ActivityLive.Show, :show, as: :activity_live
     post "/activity/create", ActivityController, :create
     post "/activity/create_from_preset", ActivityController, :create_from_preset
+    post "/activity/set_preset_position", ActivityController, :set_preset_position
     get "/image", ImageController, :show
   end
 
