@@ -6,6 +6,6 @@ defmodule NiacademyWeb.StartSessionController do
       regimens: Niacademy.Db.list_regimens,
       image_categories: Niacademy.Images.list_categories,
       presets: Niacademy.Db.list_presets |> Map.put("(none)", %{"humanName" => "(none)"}),
-      current_preset_id: "fig_dab2_3")
+      current_preset_id: Niacademy.Db.get_current_preset)
   end
 end

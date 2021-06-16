@@ -8,6 +8,7 @@ defmodule Niacademy.Repo.Migrations.CreateSessions do
       add :activities, :text
       add :show_controls, :boolean
       add :finished, :boolean
+      add :tracking_preset, :boolean
 
       timestamps()
     end

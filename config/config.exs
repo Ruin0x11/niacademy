@@ -9,7 +9,8 @@ use Mix.Config
 
 config :niacademy,
   ecto_repos: [Niacademy.Repo],
-  images_dir: "lib/images"
+  images_dir: "lib/images",
+  global_user: "nonbirithm"
 
 # Configures the endpoint
 config :niacademy, NiacademyWeb.Endpoint,

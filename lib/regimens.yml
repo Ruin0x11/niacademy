@@ -23,12 +23,19 @@ activities:
       type: Categories
 presetOrder:
   - fig_dab2_3
+  - test
 presets:
   - humanName: Figures/DaB 2.3 Dissections
     id: fig_dab2_3
-    regimenIds:
-      - figure_30
-      - textures
+    regimens:
+      - categories:
+          - female_clothed
+        regimenId: figure_30
+      - regimenId: textures
+  - humanName: Test
+    id: test
+    regimens:
+      - regimenId: textures
 regimens:
   - activities:
       - activityId: image-custom

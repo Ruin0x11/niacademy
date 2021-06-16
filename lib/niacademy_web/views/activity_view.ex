@@ -36,25 +36,26 @@ defmodule NiacademyWeb.ActivityView do
   end
 
   defp render_single_image(image_file) do
-    src = Routes.image_path(Endpoint, :show, image_file: image_file)
-      """
-      <img class="image-content" src="#{src}" alt="Content" phx-hook="ContentLoaded"/>
-      """
   end
 
   def render_image_content(source) do
     case source["extra"]["imageFiles"] do
       [image_file] ->
-        img = render_single_image(image_file)
+        src = Routes.image_path(Endpoint, :show, image_file: image_file)
         """
-        <div id="image-content" class="image-single">
-        #{img}
+        <div class="image-single">
+        <img id="image-content" class="image-content" src="#{src}" alt="Content" phx-hook="ContentLoaded"/>
         </div>
         """
       image_files ->
-        imgs = Enum.map(image_files, fn image_file -> render_single_image(image_file) end) |> Enum.concat('\n')
+        imgs = Enum.map(image_files, fn image_file ->
+        src = Routes.image_path(Endpoint, :show, image_file: image_file)
         """
-        <div id="image-content" class="image-grid">
+        <img class="image-content" src="#{src}" alt="Content"/>
+        """
+      end) |> Enum.concat('\n')
+        """
+        <div id="image-content" class="image-grid" phx-hook="ContentLoadedText">
         #{imgs}
         </div>
         """

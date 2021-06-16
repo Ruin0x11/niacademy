@@ -35,9 +35,13 @@ let Regimen
       , activities : List ActivitySegment
       }
 
+let PresetRegimen
+    : Type
+    = { regimenId : Text, categories : Optional (List Text) }
+
 let Preset
     : Type
-    = { id : Text, humanName : Text, regimenIds : List Text }
+    = { id : Text, humanName : Text, regimens : List PresetRegimen }
 
 let generateActivityList =
       \(activityId : Text) ->
@@ -107,13 +111,21 @@ let presets
     : List Preset
     = [ { id = "fig_dab2_3"
         , humanName = "Figures/DaB 2.3 Dissections"
-        , regimenIds = [ "figure_30", "textures" ]
+        , regimens =
+          [ { regimenId = "figure_30", categories = Some [ "female_clothed" ] }
+          , { regimenId = "textures", categories = None (List Text) }
+          ]
+        }
+      , { id = "test"
+        , humanName = "Test"
+        , regimens =
+          [ { regimenId = "textures", categories = None (List Text) } ]
         }
       ]
 
 let presetOrder
     : List Text
-    = [ "fig_dab2_3" ]
+    = [ "fig_dab2_3", "test" ]
 
 let Config
     : Type

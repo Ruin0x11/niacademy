@@ -46,6 +46,11 @@ defmodule NiacademyWeb.ActivityLive.Show do
                             raise "Can't go backward here."
                             else
                               finished = session.position + delta >= Enum.count(Jason.decode!(session.activities))
+
+                              if finished && session.tracking_preset && !session.finished do
+                                {:ok, _} = Niacademy.Db.increment_preset_position
+                              end
+
                               case Session.update(session, %{position: session.position + delta, finished: finished}) do
                                 {:ok, session} ->
                                   {:noreply, socket |> push_redirect(to: Routes.activity_live_path(socket, :show, session.id))}
@@ -107,7 +112,7 @@ defmodule NiacademyWeb.ActivityLive.Show do
     if socket.assigns.loaded do
       %{assigns: %{remaining: remaining}} = socket
 
-      set_timer(socket, remaining - 1)
+      set_timer(socket, remaining - 30)
     else
       socket
     end

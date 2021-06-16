@@ -11,6 +11,7 @@ defmodule Niacademy.Session do
     field :activities, :string
     field :show_controls, :boolean, default: false
     field :finished, :boolean, default: false
+    field :tracking_preset, :boolean, default: false
 
     timestamps()
   end
@@ -18,8 +19,8 @@ defmodule Niacademy.Session do
   @doc false
   def changeset(session, attrs) do
     session
-    |> cast(attrs, [:regimen_ids, :position, :activities, :show_controls, :finished])
-    |> validate_required([:regimen_ids, :position, :activities, :show_controls, :finished])
+    |> cast(attrs, [:regimen_ids, :position, :activities, :show_controls, :finished, :tracking_preset])
+    |> validate_required([:regimen_ids, :position, :activities, :show_controls, :finished, :tracking_preset])
   end
 
   @doc """

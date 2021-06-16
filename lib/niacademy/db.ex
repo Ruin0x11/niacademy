@@ -1,5 +1,6 @@
 defmodule Niacademy.Db do
   alias YamlElixir, as: Yaml
+  require Ecto.Query
 
   defp mapify(list_with_ids) do
     Enum.map(list_with_ids, fn t -> {t["id"], t} end) |> Enum.into(%{})
@@ -42,48 +43,13 @@ defmodule Niacademy.Db do
     Niacademy.Db.Cache.get["presetOrder"]
   end
 
-  def resolve_activity(id, args) do
-    Niacademy.Db.get_activity(id) |> do_resolve_activity(args)
-  end
-
-  defp do_resolve_activity(%{"source" => %{"type" => "Custom"}} = activity, args) do
-    images = Niacademy.Images.list_for_categories(args[:categories])
-    image_file = images |> Enum.random
-    extra = %{"imageFiles" => [image_file]}
-
-    MapUtils.deep_merge(activity, %{"source" => %{"extra" => extra}})
-  end
-
-  defp do_resolve_activity(%{"source" => %{"type" => "Freeform"}} = activity, _args) do
-    activity
-  end
-
-  defp do_resolve_activity(%{"source" => %{"type" => "File", "data" => data}} = activity, _args) do
-    extra = %{"imageFiles" => data}
-
-    MapUtils.deep_merge(activity, %{"source" => %{"extra" => extra}})
-  end
-
-  defp do_resolve_activity(%{"source" => %{"type" => "Categories", "data" => data}} = activity, _args) do
-    images = Niacademy.Images.list_for_categories(data["categories"])
-    image_files = images |> Enum.take_random(data["imageCount"])
-    image_files = data["files"] |> Enum.concat(image_files)
-    extra = %{"imageFiles" => image_files}
-
-    MapUtils.deep_merge(activity, %{"source" => %{"extra" => extra}})
-  end
-
-  defp do_resolve_activity(activity, _args) do
-    raise "Invalid activity #{activity}"
-  end
-
   defp resolve_one(args) do
     with regimen <- Niacademy.Db.list_regimens[args[:regimen_id]],
          categories <- args[:categories] || regimen["defaultCategories"],
          activity_args <- %{categories: categories, regimen: regimen} do
       %{
         regimen_id: args[:regimen_id],
-        activities: regimen["activities"] |> Enum.map(& Map.put(&1, :activity, Niacademy.Db.resolve_activity(&1["activityId"], activity_args))),
+        activities: regimen["activities"] |> Enum.map(& Map.put(&1, :activity, Niacademy.Activity.resolve(&1["activityId"], activity_args))),
         categories: categories
       }
     end
@@ -121,8 +87,44 @@ defmodule Niacademy.Db do
 
   def create_session_changeset_from_preset(preset_id) do
     with preset <- Niacademy.Db.list_presets[preset_id] do
-      Enum.map(preset["regimenIds"], fn id -> %{ regimen_id: id, categories: [] } end)
+      Enum.map(preset["regimens"], fn t ->
+        regimen_id = t["regimenId"]
+        regimen = Niacademy.Db.list_regimens[regimen_id]
+        categories = t["categories"] || regimen["defaultCategories"]
+
+        %{ regimen_id: regimen_id, categories: categories }
+      end)
       |> do_create_changeset(false)
+      |> Map.put(:tracking_preset, true)
+    end
+  end
+
+  def get_global_user do
+    with username <- Application.get_env(:niacademy, :global_user) do
+      Niacademy.User
+      |> Ecto.Query.where([u], u.username == ^username)
+      |> Niacademy.Repo.one
+    end
+  end
+
+  def get_current_preset do
+    with user <- Niacademy.Db.get_global_user,
+         preset_order <- Niacademy.Db.get_preset_order,
+           pos <- rem(user.preset_position, Enum.count(preset_order)) do
+      preset_order |> Enum.at(pos)
+    end
+  end
+
+  def set_preset_position(position) do
+    with user <- Niacademy.Db.get_global_user,
+         preset_order <- Niacademy.Db.get_preset_order do
+      Niacademy.User.update(user, %{preset_position: rem(position, Enum.count(preset_order))})
+    end
+  end
+
+  def increment_preset_position do
+    with user <- Niacademy.Db.get_global_user do
+      set_preset_position(user.preset_position + 1)
     end
   end
 end

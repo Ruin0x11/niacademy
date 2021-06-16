@@ -7,7 +7,8 @@
         presets: <%= Jason.encode!(@presets) |> raw() %>,
         addNewField() {
           this.fields.push({
-            regimen_id: ''
+            regimen_id: '',
+            categories: []
           });
         },
         removeField(index) {
@@ -15,17 +16,20 @@
             this.fields.splice(index, 1);
           }
         },
-        setPreset(preset_id) {
+        setPreset(preset_id, $refresh) {
           console.log(preset_id);
           if (preset_id == "(none)") {
             this.fields = [];
             this.addNewField();
           } else {
             let preset = this.presets[preset_id];
-            console.log(preset.regimenIds);
             this.fields = [];
-            for (i = 0; i < preset.regimenIds.length; i++) {
-              this.fields[i] = { regimen_id: preset.regimenIds[i] };
+            if ($refresh) {
+              // Multiselect categories will not be updated unless we do this.
+              $refresh();
+            }
+            for (i = 0; i < preset.regimens.length; i++) {
+              this.fields[i] = { regimen_id: preset.regimens[i].regimenId, categories: preset.regimens[i].categories || [] };
             }
             console.log(this.fields);
           }
@@ -33,12 +37,12 @@
         }
       }
       let preset_id = <%= "\"#{@current_preset_id}\"" |> raw() %>;
-      data.setPreset(preset_id);
+      data.setPreset(preset_id, null);
       return data;
     }
 
-    function multiselectComponent(id, index) {
-      return {
+    function multiselectComponent(id, index, categories) {
+      let data = {
         listActive: false,
         selectedString: '',
         selected: [],
@@ -56,20 +60,30 @@
           this.unselected.push(extracted[0]);
         }
       };
+
+      let parsed = JSON.parse(categories);
+      console.log(parsed);
+      for (i = 0; i < parsed.length; i++) {
+        const index = data.unselected.indexOf(parsed[i]);
+        const extracted = data.unselected.splice(index, 1);
+        data.selected.push(extracted[0]);
+      }
+
+      return data
     }
   </script>
 
   <div class="info-container">
     <section class="regimens" x-data="form_handler()">
       <%= form_tag Routes.activity_path(@conn, :create) do %>
-      <select id="preset_id" name="preset_id" x-model="preset_id" x-on:change="setPreset(preset_id)">
+      <select id="preset_id" name="preset_id" x-model="preset_id" x-on:change="setPreset(preset_id, $refresh)">
         <%= for {id, preset} <- @presets do %>
             <option value="<%= id %>"><%= preset["humanName"]%></option>
             <% end %>
       </select>
       <template x-for="(field, index) in fields" :key="index">
         <div class="regimen-container">
-          <div class="regimen-form" :data-index="index">
+          <div class="regimen-form" :data-index="index" :data-categories="JSON.stringify(field.categories)">
             <label for="msa-input">Exercise:</label>
             <select id="regimen_id" x-bind:name="'regimen_id[' + index + ']'" x-model="field.regimen_id">
               <%= for {id, regimen} <- @regimens do %>
@@ -78,7 +92,7 @@
             </select>
             <br>
             <label for="msa-input">Image categories:</label>
-            <%= render NiacademyWeb.ComponentView, "multi_select.html", conn: @conn, data: "multiselectComponent('categories', $el.parentElement.dataset.index)", label: "Select..." %>
+            <%= render NiacademyWeb.ComponentView, "multi_select.html", conn: @conn, data: "multiselectComponent('categories', $el.parentElement.dataset.index, $el.parentElement.dataset.categories)", label: "Select..." %>
             <br>
           </div>
         <button class="delete-button" x-on:click="removeField(index)" type="button">-</button>
