@@ -123,7 +123,7 @@ defmodule Niacademy.Db do
       cond do
         ratio < 0.5 -> :tutorial
         ratio > 2.0 -> :free
-        true        -> :tutorial
+        true        -> :free
       end
     end
   end
