@@ -1,5 +1,5 @@
 <div class="start-container">
-  <div class="tracked-stats">
+  <div id="tracked-stats" class="tracked-stats">
     <%= format_time @tutorial_draw_time, "tutorial-time" %>
     <span>/</span>
     <%= format_time @free_draw_time, "free-time" %>
@@ -11,3 +11,7 @@
     <div class="current-preset">Preset: <%= @preset["humanName"] %></div>
   </div>
 </div>
+<script>
+  let stats = document.getElementById("tracked-stats");
+  stats.style["background-size"] = <%= "\"#{@draw_time_percentage}% 100%\"" |> raw() %>;
+</script>
