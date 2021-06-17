@@ -2,21 +2,31 @@ let JSON/Nesting = https://prelude.dhall-lang.org/v15.0.0/JSON/Nesting
 
 let List/map = https://prelude.dhall-lang.org/v15.0.0/List/map
 
-let SourceType = < File | Categories | Freeform | Custom >
-
+-- Used with the categories screen: one or more images that will always appear
+-- as a prompt/guideline, and a set of N randomly selected image.
 let Categories
     : Type
     = { categories : List Text, imageCount : Natural, files : List Text }
 
+-- Because Dhall doesn't have typed unions...
+let SourceType = < File | Categories | Freeform | Custom >
 let SourceData =
       < File : List Text | Categories : Categories | Freeform : Text | Custom >
 
-let ProjectType = < Tutorial | Free >
-
+-- The data needed to show an activity on the screen. Can be one or more
+-- specific images, a set of categories to randomly choose images from, or just
+-- some text.
 let Source
     : Type
     = { type : SourceType, data : SourceData }
 
+-- Indicates if the time spent on an activity counts towards fulfilling
+-- tutorial-based learning or free drawing.
+let ProjectType = < Tutorial | Free >
+
+-- A single screen of content that appears in the overall sequence. For example,
+-- it can display a picture of a pose to copy from, or a series of related
+-- images to gather ideas from.
 let Activity
     : Type
     = { id : Text
@@ -26,10 +36,16 @@ let Activity
       , projectType : ProjectType
       }
 
+-- An activity with a time associated with it, for use with a regimen. If
+-- `unboundedDuration` is True, the skip button will appear after the specified
+-- minimum duration has passed, and the user will choose when to proceed to the
+-- next activity. Otherwise, the activity will be changed automatically.
 let ActivitySegment
     : Type
     = { activityId : Text, durationMinutes : Natural, unboundedDuration : Bool }
 
+-- A set of drawing activities that are timed and automatically progressed
+-- through.
 let Regimen
     : Type
     = { id : Text
@@ -38,10 +54,15 @@ let Regimen
       , activities : List ActivitySegment
       }
 
+-- A single regimen inside a preset, which can have its own image categories set
+-- separately.
 let PresetRegimen
     : Type
     = { regimenId : Text, categories : Optional (List Text) }
 
+-- A list of regimens that can be selected through the custom session screen and
+-- used with the quickstart feature. The activities in each regimen are
+-- concatenated together to form one continuous drawing session.
 let Preset
     : Type
     = { id : Text, humanName : Text, regimens : List PresetRegimen }
@@ -57,6 +78,7 @@ let generateActivityList =
           )
           durations
 
+-- The set of available activities.
 let activities
     : List Activity
     = [   { id = "image-custom"
@@ -101,6 +123,7 @@ let activities
         : Activity
       ]
 
+-- The set of regimens available for use.
 let regimens
     : List Regimen
     = [ { id = "figure_30"
@@ -133,6 +156,9 @@ let regimens
         }
       ]
 
+-- The set of presets available for use. They will appear in the custom session
+-- screen. They can also be used for automatic scheduling using preset orders
+-- (see below).
 let presets
     : List Preset
     = [ { id = "fig_dab2_3"
@@ -154,14 +180,21 @@ let presets
         }
       ]
 
+-- List of presets to cycle through for the block-based learning feature. After
+-- a quickstart session for learning/free drawing is finished, the next preset
+-- in the list will be selected for the next quickstart session of that type,
+-- wrapping around. The time spent on learning and free drawing will be kept
+-- track of to stay close to a 50% balance.
 let PresetOrder
     : Type
     = { tutorial : List Text, free : List Text }
 
+-- Presets that will be cycled through when more tutorial time is needed.
 let presetOrderTutorial
     : List Text
     = [ "fig_dab2_3", "test" ]
 
+-- Presets that will be cycled through when more free draw time is needed.
 let presetOrderFree
     : List Text
     = [ "free_draw_15" ]

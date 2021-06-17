@@ -31,7 +31,7 @@ services:
       - VIRTUAL_PORT=4000
       - LETSENCRYPT_HOST=niacademy.nori.moe
     volumes:
-      - /home/hiro/build/work/niacademy/lib/images:/app/images
+      - /home/hiro/build/work/niacademy/priv/images:/app/images
       - /home/hiro/build/work/niacademy/config/regimens.yml:/app/regimens.yml
     ports:
       - 4000:4000

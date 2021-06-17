@@ -9,7 +9,7 @@ use Mix.Config
 
 config :niacademy,
   ecto_repos: [Niacademy.Repo],
-  images_dir: "lib/images",
+  images_dir: "priv/images",
   regimens_file: "config/regimens.yml",
   global_user: "nonbirithm"
 
