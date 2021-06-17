@@ -166,6 +166,7 @@ defmodule NiacademyWeb.ActivityLive.Show do
     activity = activity["activity"]
     description = "Activity: #{activity["humanName"]} (#{session.position+1}/#{activity_count})"
     tags = [
+      "niacademy",
       "activity:#{activity["id"]}",
       "preset:#{session.preset_id || "<none>"}",
       "regimen:#{activity["regimenId"]}"
