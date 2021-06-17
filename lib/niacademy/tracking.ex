@@ -75,7 +75,7 @@ defmodule Niacademy.Tracking do
     case project_type do
       :tutorial -> tutorial_draw_project()
       :free -> free_draw_project()
-      _ -> raise "Invalid project type"
+      x -> raise "Invalid project type #{x}"
     end
   end
 
@@ -89,7 +89,7 @@ defmodule Niacademy.Tracking do
   end
 
   def stop_tracking_active do
-    Logger.debug("Stopping active tracking.")
+    Logger.warning("Stopping active tracking.")
     case client() |> Togglex.Api.TimeEntries.current |> Map.get(:data) do
       nil -> nil
       time_entry -> client() |> Togglex.Api.TimeEntries.stop(time_entry[:id])

@@ -1,6 +1,10 @@
 <div class="activity-container">
   <%= render_activity(@activity["activity"]) %>
 
+  <div id="exit-bar">
+    <%= button "", to: Routes.start_path(NiacademyWeb.Endpoint, :index), method: :get, class: "fas fa-times fa-2x exit-button" %>
+  </div>
+
   <div id="bottom-bar">
     <progress id="progress-bar" class="progress-bar" max="100" value=<%= @percent_elapsed %>></progress>
     <div class="bar-container">

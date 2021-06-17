@@ -1,22 +1,33 @@
-$bar-height = 15vh
+$bar-height = 15vh;
 
 .activity-container
    .info
-       font-size: 28pt;
+       font-size: 40pt;
        width: auto;
        margin: 0 0.1em;
+       @media (max-height: 1024px)
+         font-size: 35pt;
+       @media (max-height: 800px)
+         font-size: 28pt;
+       @media (max-height: 700px)
+         font-size: 26pt;
+       @media (max-height: 500px)
+         font-size: 22pt;
+       @media (max-height: 300px)
+         font-size: 18pt;
        .position
            padding-right: 0.2em;
            .position-current
-               color: #DDDDDD
+               color: #DDDDDD;
            .position-total
-               color: #888888
+               color: #888888;
 
    #content
       display: block;
       position: relative;
       height: (100vh - $bar-height);
       overflow: auto;
+
       .image-single
         .image-content
           padding: 2em;
@@ -30,9 +41,9 @@ $bar-height = 15vh
           max-width: 100%;
           width: auto;
           height: auto;
+
       .image-grid
         line-height: 0;
-
         -webkit-column-count: 5;
         -webkit-column-gap:   0px;
         -moz-column-count:    5;
@@ -58,6 +69,52 @@ $bar-height = 15vh
         .image-content
           width: 100% !important;
           height: auto !important;
+
+      .text-container
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        flex-direction: column;
+        margin: auto;
+        width: 100%;
+        height: 100%;
+        .text-content
+          font-size: 80px;
+          @media (max-width: 1200px)
+            font-size: 70px;
+          @media (max-width: 1000px)
+            font-size: 55px;
+          @media (max-width: 800px)
+            font-size: 40px;;
+          @media (max-width: 400px)
+            font-size: 20px;
+
+   #exit-bar
+      text-align: center;
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 5rem;
+      min-height: 5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      width: 100%;
+      min-height: 15vh;
+      .exit-button
+          background: rgb(40, 44, 47);
+          color: rgba(255, 255, 255, 0.44);
+          margin: 1em;
+          position: absolute;
+          top: 0;
+          right: 0;
+          padding: 0;
+          height: 6.0rem;
+          width: 6.0rem;
+          &:hover
+            background-color: rgb(60, 66, 72);
+            color: rgba(255, 255, 255, 0.66);
 
    #bottom-bar
       background: #111111;

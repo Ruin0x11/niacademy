@@ -7,6 +7,7 @@ defmodule NiacademyWeb.ActivityLive.Show do
 
   @impl true
   def mount(_params, _session, socket) do
+    Niacademy.LiveMonitor.monitor(self(), __MODULE__, %{id: socket.id})
     {:ok,
      assign(socket,
        mode: :paused,
@@ -20,6 +21,16 @@ defmodule NiacademyWeb.ActivityLive.Show do
        unbounded: false,
        loaded: false
      )}
+  end
+
+  # called by LiveMonitor
+  def unmount(reason, %{id: id}) do
+    Logger.debug("View #{id} unmounted: #{inspect(reason)}")
+    with {:shutdown, _} <- reason do
+      Logger.warning("Halting tracking for session.")
+      Niacademy.Tracking.stop_tracking_active()
+    end
+    :ok
   end
 
   @impl true
@@ -160,9 +171,16 @@ defmodule NiacademyWeb.ActivityLive.Show do
       "regimen:#{activity["regimenId"]}"
     ]
 
-    session.project_type
+    project_type =
+      case session.project_type do
+        :none -> activity["projectType"] |> String.downcase |> String.to_atom
+        type -> type
+      end
+
+    project_type
     |> Niacademy.Tracking.project_type_to_project
     |> Niacademy.Tracking.start_tracking(description, tags)
+    |> IO.inspect
 
     Niacademy.Jobs.TrackerTimeout.persist(total_seconds * 1.5)
 

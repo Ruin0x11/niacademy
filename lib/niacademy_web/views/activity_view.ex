@@ -61,7 +61,9 @@ defmodule NiacademyWeb.ActivityView do
 
   def render_freeform_content(source) do
       """
-      <h1 id="content" phx-hook="ContentLoadedText"/>#{source["data"]}</h1>
+      <div id="content" class="text-container">
+      <h1 id="content-text" class="text-content" phx-hook="ContentLoadedText"/>#{source["data"]}</h1>
+      </div>
       """
   end
 end

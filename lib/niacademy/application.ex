@@ -21,7 +21,8 @@ defmodule Niacademy.Application do
       Niacademy.Images.Cache,
       Niacademy.Tracking.Cache,
       Niacademy.Jobs.CleanSessions,
-      Niacademy.Jobs.TrackerTimeout
+      Niacademy.Jobs.TrackerTimeout,
+      Niacademy.LiveMonitor
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

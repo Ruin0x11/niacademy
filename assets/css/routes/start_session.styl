@@ -4,6 +4,8 @@
         .regimens
             margin-left: 20px;
             width: 50%;
+            @media (max-width: 800px)
+                width: 100%
 
             form
               margin-bottom: 0;
@@ -26,6 +28,9 @@
                     border-radius: 4px;
                     select
                         border: 1px solid rgb(61, 66, 69);
+                        width: auto;
+                        @media (max-width: 800px)
+                           width: 100%;
 
                 .delete-button
                     border-color: darken(#d9534f, 10%);
