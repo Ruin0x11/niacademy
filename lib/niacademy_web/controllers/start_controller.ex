@@ -15,7 +15,11 @@ defmodule NiacademyWeb.StartController do
 
     %{tutorial: tutorial, free: free, ratio: ratio} = Niacademy.Tracking.Cache.get_stats()
 
-    percentage = clamp((tutorial / (tutorial + free)) * 100, 0, 100)
+    percentage = if tutorial + free == 0 do
+                    50
+                 else
+                    clamp((tutorial / (tutorial + free)) * 100, 0, 100)
+                  end
 
     render(conn, "index.html",
       preset_id: preset_id,
